@@ -16,19 +16,19 @@ V0 = 2
 
 V = 4
 
-t_vc  = np.linspace(0, 10*tau, 1000)
+t_vc  = np.linspace(0, 5*tau, 1000)
 
 V_C = np.exp(-t/tau)*V0 - V0/2
 
-V_t = V0 + (V0 - V)*np.exp(-t/tau) - V0/2
+t_vt = np.linspace(5*tau, 10*tau, 1000)
 
-t_vt = np.linspace(10*tau, 20*tau, 1000)
+V_t = V0 + (V0 - V)*np.exp(-t/tau) - V0/2
 
 # =============================================================================
 # Square wave
 # =============================================================================
 
-t_sqwave = np.linspace(0, 20*tau, 1000)
+t_sqwave = np.linspace(0, 10*tau, 1000)
 
 sqwave = np.piecewise(t, [t > 10*tau, t < 10*tau, t == 0], [V0/2, -V0/2, V0/2])
 
