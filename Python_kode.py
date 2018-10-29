@@ -67,7 +67,6 @@ plt.title('Voltage across capacitor')
 plt.figure(figsize=(12, 8))
 plt.plot(t_vc, cap[:5000] - V_C, 'k,',
          time_charge + t_vt, cap[5000:] - V_t, 'k,')
-             # t_sqwave, sqwave, '--')
 plt.xlabel('$t$ [s]')
 plt.ylabel('$V_{data} - V_C$ [V]')
 plt.title('Difference between data and model')
