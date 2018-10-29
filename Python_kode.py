@@ -51,13 +51,21 @@ sqwave = np.piecewise(t_sqwave,
 # =============================================================================
 
 plt.figure(figsize = (12, 8))
-plt.plot(tid - tid[0], cap, 'k,', t_vc, V_C, 'r-', 
-         t_sqwave, sqwave, 'g-', time_charge + t_vt, V_t, 'b-')
+plt.plot(tid - tid[0], cap, 'k,', 
+         t_vc, V_C, 'c-', 
+         time_charge + t_vt, V_t, 'c-', 
+         t_sqwave, sqwave, 'y-', 
+         tau, np.exp(-1)*V0 - V0/2, 'mx')
 plt.xlabel('$t$ [s]')
 plt.ylabel('$V_C$ [V]')
 plt.title('Voltage across capacitor')
 # plt.savefig('Afladning_kapacitor.pdf')
 
 plt.figure(figsize = (12, 8))
-plt.plot(t_vc, cap[:5000] - V_C, 'k-', 
-         time_charge + t_vt, cap[5000:] - V_t, 'k-')
+plt.plot(t_vc, cap[:5000] - V_C, 'k,', 
+         time_charge + t_vt, cap[5000:] - V_t, 'k,')
+         #t_sqwave, sqwave, '--')
+plt.xlabel('$t$ [s]')
+plt.ylabel('$V_{data} - V_C$ [V]')
+plt.title('Difference between data and model')
+# plt.savefig('Forskel_data_model.pdf')
