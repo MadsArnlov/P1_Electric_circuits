@@ -1,6 +1,7 @@
 # =============================================================================
 # Modelling of RC-circuit
 # =============================================================================
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -27,4 +28,9 @@ sqwave = np.piecewise(t, [t == 0, t > 0], [V0/2, -V0/2])
 # Plotting
 # =============================================================================
 
+plt.figure(figsize = (12, 8))
 plt.plot(t, V_C, 'r-', t, sqwave, 'b-')
+plt.xlabel('$t$ [s]')
+plt.ylabel('$V_C$ [V]')
+plt.title('Voltage across capacitor')
+plt.savefig('Afladning_kapacitor.pdf')
