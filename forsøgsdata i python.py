@@ -11,9 +11,9 @@ os.chdir("C:\\Users\\bergl\\OneDrive\\Documents\\GitHub\\P1_Electric_circuits")
 data=np.genfromtxt("forsøgsdata.csv", delimiter=",")
 
 
-tid = data[1:5000,0]
-sqwave = data[1:5000,1]
-cap = data[1:5000,2]
+tid = data[1:,0]
+sqwave = data[1:,1]
+cap = data[1:,2]
 plt.plot(tid,cap,"r,")
 
 
