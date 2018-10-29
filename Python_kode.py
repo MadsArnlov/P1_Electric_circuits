@@ -14,23 +14,31 @@ C = 98.98 * 10**(-9)
 tau = R*C
 V0 = 2
 
-t = np.linspace(0, 10*tau, 1000)
+V = 4
+
+t_vc  = np.linspace(0, 5*tau, 1000)
 
 V_C = np.exp(-t/tau)*V0 - V0/2
+
+t_vt = np.linspace(5*tau, 10*tau, 1000)
+
+V_t = V0 + (V0 - V)*np.exp(-t/tau) - V0/2
 
 # =============================================================================
 # Square wave
 # =============================================================================
 
-sqwave = np.piecewise(t, [t == 0, t > 0], [V0/2, -V0/2])
+t_sqwave = np.linspace(0, 10*tau, 1000)
+
+sqwave = np.piecewise(t, [t > 10*tau, t < 10*tau, t == 0], [V0/2, -V0/2, V0/2])
 
 # =============================================================================
 # Plotting
 # =============================================================================
 
 plt.figure(figsize = (12, 8))
-plt.plot(t, V_C, 'r-', t, sqwave, 'b-')
+plt.plot(t_vc, V_C, 'r-', t_sqwave, sqwave, 'b-', t_vt, V_t, 'g-')
 plt.xlabel('$t$ [s]')
 plt.ylabel('$V_C$ [V]')
 plt.title('Voltage across capacitor')
-plt.savefig('Afladning_kapacitor.pdf')
+# plt.savefig('Afladning_kapacitor.pdf')
