@@ -43,8 +43,11 @@ V_t = V0 + (V0 - V)*np.exp(-t_vt/tau) - V0/2
 t_sqwave = np.linspace(0, time_charge*2, 1000)
 
 sqwave = np.piecewise(t_sqwave, 
-                      [t_sqwave > time_charge, t_sqwave < time_charge, t_sqwave == 0], 
-                      [V0/2, -V0/2, V0/2])
+                      [t_sqwave > time_charge, 
+                       t_sqwave < time_charge, 
+                       t_sqwave == 0], 
+                      [V0/2, -V0/2, V0/2]
+                      )
 
 # =============================================================================
 # Plotting
