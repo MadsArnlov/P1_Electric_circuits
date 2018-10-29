@@ -51,10 +51,10 @@ sqwave = np.piecewise(t_sqwave,
 # =============================================================================
 
 plt.figure(figsize = (12, 8))
-plt.plot(tid - tid[0], cap, 'k,', 
+plt.plot(t_sqwave, sqwave, 'y-', 
          t_vc, V_C, 'c-', 
          time_charge + t_vt, V_t, 'c-', 
-         t_sqwave, sqwave, 'y-', 
+         tid - tid[0], cap, 'k,',
          tau, np.exp(-1)*V0 - V0/2, 'mx')
 plt.xlabel('$t$ [s]')
 plt.ylabel('$V_C$ [V]')
