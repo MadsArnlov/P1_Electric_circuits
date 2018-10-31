@@ -94,7 +94,7 @@ plt.plot(time - time[0], cap, 'b,')
 plt.xlabel('$t$ [s]')
 plt.ylabel('$V_C$ [V]')
 plt.title('Data of RC-circuit')
-# plt.savefig('Data.pdf')
+plt.savefig('data.png')
 
 # =============================================================================
 # Plot of mathematical model
@@ -106,7 +106,7 @@ plt.plot(time_charge + t, V_C2(t), 'tab:orange')
 plt.xlabel('$t$ [s]')
 plt.ylabel('$V_C$ [V]')
 plt.title('Mathematical model')
-# plt.savefig('Mathematical_model.pdf')
+plt.savefig('mathematical_model.png')
 
 # =============================================================================
 # Plot of data and mathematical model
@@ -122,7 +122,7 @@ plt.xlabel('$t$ [s]')
 plt.ylabel('$V_C$ [V]')
 plt.legend()
 plt.title('Voltage across capacitor')
-# plt.savefig('Afladning_kapacitor.pdf')
+plt.savefig('data_vs_model.png')
 
 # =============================================================================
 # Plot of deviation between data and mathematical model
@@ -134,4 +134,4 @@ plt.plot(t, cap[:5000] - V_C(t), 'k,',
 plt.xlabel('$t$ [s]')
 plt.ylabel('$V_{data} - V_C$ [V]')
 plt.title('Difference between data and model')
-# plt.savefig('Forskel_data_model.pdf')
+plt.savefig('deviation.png')
