@@ -24,7 +24,7 @@ C = 98.98 * 10**(-9)
 tau = R*C
 V0 = 2
 
-V = 4
+K = -4
 
 time_charge = (4*10**-6 - tid[0])
 
@@ -34,7 +34,7 @@ V_C = np.exp(-t_vc/tau)*V0 - V0/2
 
 t_vt = np.linspace(0*tau, time_charge, 5000)
 
-V_t = V0 + (V0 - V)*np.exp(-t_vt/tau) - V0/2
+V_t = V0 + np.exp(-t_vt/tau)*(V0 + K) - V0/2
 
 # =============================================================================
 # Square wave
