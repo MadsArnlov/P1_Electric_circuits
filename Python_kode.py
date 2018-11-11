@@ -36,6 +36,7 @@ an arary for time is made, t, which has the length of 5000, uniform spaced
 values between 0 and 'time_charge'.
 """
 t = np.linspace(0, time_charge, 5000)
+s = np.linspace(1, 100/tau, 5000)
 
 def V_C(t):
     """
@@ -71,6 +72,10 @@ def V_C2(t):
         The time as the circuit enters steady-state
     """
     return V0 + np.exp(-t/tau)*(V0 + K) - V0/2
+
+
+def H(s):
+    return 1/np.sqrt(s**2*tau**2 + 1)
 
 # =============================================================================
 # Square wave
@@ -135,3 +140,21 @@ plt.xlabel('$t$ [s]')
 plt.ylabel('$V_{data} - V_C$ [V]')
 plt.title('Difference between data and model')
 plt.savefig('deviation.png')
+
+# =============================================================================
+# Bodeplot of RC LP filter
+# =============================================================================
+
+plt.figure(figsize=(12, 8))
+plt.subplot(2, 1, 1)
+plt.semilogx(s, 20*np.log10(H(s)), 'b-',
+             1/tau, 20*np.log10(H(1/tau)), 'kx')
+plt.ylabel('$Magnitude [dB]$')
+plt.title('$Bodeplot of RC LP filter$')
+
+plt.subplot(2, 1, 2)
+plt.semilogx(s, np.arctan(1/(s*tau)), 'b-')
+plt.xlabel('$Frequency [Hz]$')
+plt.ylabel('$Phase [radians]$')
+
+plt.show()
