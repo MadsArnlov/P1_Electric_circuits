@@ -38,19 +38,20 @@ values between 0 and 'time_charge'.
 t = np.linspace(0, time_charge, 5000)
 s = np.linspace(1, 100/tau, 5000)
 
+
 def V_C(t):
     """
     Returns the voltage of the capacitor as it discharges through the resistor.
 
     The formula is derived in chapter "RC-time analysis", section
-    "Zero-state":
+    "Zero state":
         Vc(t) = e^(-t/tau)V0
     The data is offset by V0/2, for which the model is modified.
 
     Parameters
     ----------
     t: float
-        The time after zero-state
+        The time after zero state
     """
     return np.exp(-t/tau)*V0 - V0/2
 
@@ -59,8 +60,8 @@ def V_C2(t):
     """
     Returns the voltage of the capacitor as it charges.
 
-    The formula is derived in chapter "RC-time analysis", section
-    "Steady-state":
+    The formula is derived in chapter "RC time analysis", section
+    "Steady state":
         Vc(t) = V + e^(-t/tau)(V + K)
     The data is offset by V0/2, for which the model is modified.
 
@@ -69,13 +70,26 @@ def V_C2(t):
     Parameters
     ----------
     t: float
-        The time as the circuit enters steady-state
+        The time as the circuit enters steady state
     """
     return V0 + np.exp(-t/tau)*(V0 + K) - V0/2
 
 
-def H(s):
+def H_lp(s):
+    """
+    Returns the transfer function of a first order Low Pass filter.
+
+    The formula is derived in chapter "Passive Analogue Filters", section
+    "Bodeplot":
+        H(s) = 1/sqrt(s^2tau^2 + 1)
+
+    Parameters
+    ----------
+    s: float
+        The complex frequency
+    """
     return 1/np.sqrt(s**2*tau**2 + 1)
+
 
 # =============================================================================
 # Square wave
@@ -83,11 +97,11 @@ def H(s):
 "A piecewise function is a simple way to create a square wave."
 t_sqwave = np.linspace(0, time_charge*2, 1000)
 
-sqwave = np.piecewise(t_sqwave, # The parameter
-                      [t_sqwave > time_charge, # The first condition
-                       t_sqwave < time_charge, # The second condition
-                       t_sqwave == 0],         # The third condition
-                      [V0/2, -V0/2, V0/2]      # The corresponding values
+sqwave = np.piecewise(t_sqwave,                 # The parameter
+                      [t_sqwave > time_charge,  # The first condition
+                       t_sqwave < time_charge,  # The second condition
+                       t_sqwave == 0],          # The third condition
+                      [V0/2, -V0/2, V0/2]       # The corresponding values
                       )
 
 # =============================================================================
@@ -136,7 +150,7 @@ plt.savefig('data_vs_model.png')
 plt.figure(figsize=(12, 8))
 plt.plot(t, cap[:5000] - V_C(t), 'k,',
          time_charge + t, cap[5000:] - V_C2(t), 'k,')
-plt.xlabel('$t$ [s]')
+plt.xlabel('t [s]')
 plt.ylabel('$V_{data} - V_C$ [V]')
 plt.title('Difference between data and model')
 plt.savefig('deviation.png')
@@ -147,14 +161,17 @@ plt.savefig('deviation.png')
 
 plt.figure(figsize=(12, 8))
 plt.subplot(2, 1, 1)
-plt.semilogx(s, 20*np.log10(H(s)), 'b-',
-             1/tau, 20*np.log10(H(1/tau)), 'kx')
-plt.ylabel('$Magnitude [dB]$')
-plt.title('$Bodeplot of RC LP filter$')
+plt.semilogx(s, 20*np.log10(H_lp(s)), 'b-', label='LP Transfer function')
+plt.semilogx(1/tau, 20*np.log10(H_lp(1/tau)), 'kx', label='Gain at time=1/tau')
+plt.legend()
+plt.ylabel('Magnitude [dB]')
+plt.title('Bodeplot of RC LP filter')
 
 plt.subplot(2, 1, 2)
-plt.semilogx(s, np.arctan(1/(s*tau)), 'b-')
-plt.xlabel('$Frequency [Hz]$')
-plt.ylabel('$Phase [radians]$')
+plt.semilogx(s, np.arctan(1/(s*tau))*180/np.pi, 'b-', label='LP Phase shift')
+plt.yticks(np.arange(0, 105, step=15))
+plt.legend()
+plt.xlabel('Frequency [Hz]')
+plt.ylabel('Phase [degrees]')
 
 plt.show()
