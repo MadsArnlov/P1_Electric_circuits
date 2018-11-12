@@ -29,6 +29,9 @@ V0 = 2
 
 K = -4
 
+R2 = R*10
+tau2 = R2*C
+
 """
 The measurements for discharge/charge has the duration of 'time_charge',
 and these measurements each have 5000 points. To simulate this accordingly,
@@ -88,8 +91,23 @@ def H_lp(s):
     s: float
         The complex frequency
     """
-    return 1/np.sqrt(s**2*tau**2 + 1)
+    return 1/np.sqrt(s**2 * tau**2 + 1)
 
+
+def H_hp(s):
+    """
+    Returns the transfer function of a first order High Pass Filter.
+    
+    """
+    return 1/np.sqrt(1 + (1/(s*tau))**2)
+
+
+def H_bp(s):
+    """
+    Returns the transfer function of a first order Band Pass filter.
+    
+    """
+    return 1/np.sqrt(s**2 * tau**2 + 1/(s**2 * tau2**2) + 4)
 
 # =============================================================================
 # Square wave
@@ -173,5 +191,48 @@ plt.yticks(np.arange(0, 105, step=15))
 plt.legend()
 plt.xlabel('Frequency [Hz]')
 plt.ylabel('Phase [degrees]')
+
+plt.show()
+
+# =============================================================================
+# Bodeplot of RC HP filter
+# =============================================================================
+
+plt.figure(figsize=(12, 8))
+plt.subplot(2, 1, 1)
+plt.semilogx(s, 20*np.log10(H_hp(s)), 'b-', label='HP Transfer function')
+plt.semilogx(1/tau, 20*np.log10(H_hp(1/tau)), 'kx', label='Gain at time=1/tau')
+plt.legend()
+plt.ylabel('Magnitude [dB]')
+plt.title('Bodeplot of RC HP filter')
+
+plt.subplot(2, 1, 2)
+plt.semilogx(s, np.arctan(s*tau)*180/np.pi, 'b-', label='HP Phase shift')
+plt.yticks(np.arange(0, 105, step=15))
+plt.legend()
+plt.xlabel('Frequency [Hz]')
+plt.ylabel('Phase [degree]')
+
+plt.show()
+
+# =============================================================================
+# Bodeplot of RC BP filter
+# =============================================================================
+
+plt.figure(figsize=(12, 8))
+plt.subplot(2, 1, 1)
+plt.semilogx(s, 20*np.log10(H_bp(s)), 'b-', label='BP Transfer function')
+plt.semilogx(1/tau, 20*np.log10(H_bp(1/tau)), 'kx', label='Gain at time=1/tau')
+plt.semilogx(1/tau2, 20*np.log10(H_bp(1/tau2)), 'kx')
+plt.legend()
+plt.ylabel('Magnitude [dB]')
+plt.title('Bodeplot of RC BP filter')
+
+#plt.subplot(2, 1, 2)
+#plt.semilogx(s, np.arctan(s*tau)*180/np.pi, 'b-', label='HP Phase shift')
+#plt.yticks(np.arange(0, 105, step=15))
+#plt.legend()
+#plt.xlabel('Frequency [Hz]')
+#plt.ylabel('Phase [degree]')
 
 plt.show()
