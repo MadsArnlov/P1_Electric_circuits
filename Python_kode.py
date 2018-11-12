@@ -83,7 +83,7 @@ def H_lp(s):
     Returns the transfer function of a first order Low Pass filter.
 
     The formula is derived in chapter "Passive Analogue Filters", section
-    "Bodeplot":
+    "Low pass filter":
         H(s) = 1/sqrt(s^2tau^2 + 1)
 
     Parameters
@@ -97,7 +97,15 @@ def H_lp(s):
 def H_hp(s):
     """
     Returns the transfer function of a first order High Pass Filter.
-    
+
+    The formula is derived in chapter "Passive Analogue Filters", section
+    "High pass filter":
+        H(s) = 1/sqrt(1 + (1/s*tau)^2)
+
+    Parameters
+    ----------
+    s: float
+        The complex frequency
     """
     return 1/np.sqrt(1 + (1/(s*tau))**2)
 
@@ -105,9 +113,18 @@ def H_hp(s):
 def H_bp(s):
     """
     Returns the transfer function of a first order Band Pass filter.
-    
+
+    The formula is derived in chapter "Passive Analogue Filters", section
+    "Band pass filter":
+        H(s) = 1/sqrt(s^2tau^2 + 1/s^2tau^2 + 4)
+
+    Parameters
+    ----------
+    s: float
+        The complex frequency
     """
     return 1/np.sqrt(s**2 * tau**2 + 1/(s**2 * tau2**2) + 4)
+
 
 # =============================================================================
 # Square wave
@@ -220,7 +237,7 @@ plt.show()
 # =============================================================================
 
 plt.figure(figsize=(12, 8))
-plt.subplot(2, 1, 1)
+#plt.subplot(2, 1, 1)
 plt.semilogx(s, 20*np.log10(H_bp(s)), 'b-', label='BP Transfer function')
 plt.semilogx(1/tau, 20*np.log10(H_bp(1/tau)), 'kx', label='Gain at time=1/tau')
 plt.semilogx(1/tau2, 20*np.log10(H_bp(1/tau2)), 'kx')
