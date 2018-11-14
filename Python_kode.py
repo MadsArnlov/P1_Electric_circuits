@@ -16,7 +16,7 @@ sqwave_data = data[1:, 1]
 cap = data[1:, 2]
 
 "'time_charge' is the measured time before the capacitor starts charging."
-time_charge = (4*10**-6 - time[0])
+time_charge = (time[5001] - time[0])
 
 # =============================================================================
 # Voltage drop across capacitor as a function of time
@@ -116,7 +116,7 @@ def H_bp(s):
 
     The formula is derived in chapter "Passive Analogue Filters", section
     "Band pass filter":
-        H(s) = 1/sqrt(s^2tau^2 + 1/s^2tau^2 + 4)
+        H(s) = 1/sqrt(s^2tau^2 + 1/(s^2tau^2) + 4)
 
     Parameters
     ----------
