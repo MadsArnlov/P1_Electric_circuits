@@ -22,12 +22,13 @@ time_charge = (time[5001] - time[0])
 # Voltage drop across capacitor as a function of time
 # =============================================================================
 "The values of the components used in the experiment are defined:"
-R = 4732
-C = 98.98 * 10**(-9)
-tau = R*C
-V0 = 2
+R = 4732                                            # Resistance
+C = 98.98 * 10**(-9)                                # Capacitance
+tau = R*C                                           # Time constant
+omega_c = 1/tau                                     # Cutoff frequency
+V0 = 2                                              # Initial voltage
 
-K = -4
+V = 4
 
 R2 = R*10
 tau2 = R2*C
@@ -75,7 +76,7 @@ def V_C2(t):
     t: float
         The time as the circuit enters steady state
     """
-    return V0 + np.exp(-t/tau)*(V0 + K) - V0/2
+    return V0 + np.exp(-t/tau)*(V0 - V) - V0/2
 
 
 def H_lp(omega):
@@ -196,21 +197,26 @@ plt.savefig('deviation.png')
 
 plt.figure(figsize=(12, 8))
 plt.subplot(2, 1, 1)
-plt.semilogx(omega, 20*np.log10(H_lp(omega)), 'b-', label='LP Transfer function')
-plt.semilogx(1/tau, 20*np.log10(H_lp(1/tau)), 'kx', label='Gain at time=1/tau')
+plt.semilogx(omega, 20*np.log10(H_lp(omega)),
+             'b-', label='LP Transfer function')
+plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)),
+             'kx', label='Gain at $\omega=\omega_c$')
 plt.legend()
 plt.grid(True)
-plt.ylabel('Magnitude [dB]')
+plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 plt.title('Bodeplot of RC LP filter')
 
 
 plt.subplot(2, 1, 2)
-plt.semilogx(omega, np.arctan(-omega*tau)*180/np.pi, 'b-', label='LP Phase shift')
+plt.semilogx(omega, np.arctan(-omega*tau)*180/np.pi,
+             'b-', label='LP Phase shift')
+plt.semilogx(omega_c, np.arctan(-omega_c*tau)*180/np.pi,
+             'kx', label='Phase at $\omega=\omega_c$')
 plt.yticks(np.arange(0, -105, step=-15))
 plt.legend()
 plt.grid(True)
-plt.xlabel('Angular frequency [Hz]')
-plt.ylabel('Phase [degrees]')
+plt.xlabel('Angular frequency $\omega$ [Hz]')
+plt.ylabel('Phase $\u03B8$ [degrees]')
 
 plt.savefig('bodeplot_rc_lp.png')
 plt.show()
@@ -221,14 +227,17 @@ plt.show()
 
 plt.figure(figsize=(12, 8))
 plt.subplot(2, 1, 1)
-plt.semilogx(omega, 20*np.log10(H_hp(omega)), 'b-', label='HP Transfer function')
-plt.semilogx(1/tau, 20*np.log10(H_hp(1/tau)), 'kx', label='Gain at time=1/tau')
+plt.semilogx(omega, 20*np.log10(H_hp(omega)),
+             'b-', label='HP Transfer function')
+plt.semilogx(1/tau, 20*np.log10(H_hp(1/tau)),
+             'kx', label='Gain at time=1/tau')
 plt.legend()
 plt.ylabel('Magnitude [dB]')
 plt.title('Bodeplot of RC HP filter')
 
 plt.subplot(2, 1, 2)
-plt.semilogx(omega, np.arctan(omega*tau)*180/np.pi, 'b-', label='HP Phase shift')
+plt.semilogx(omega, np.arctan(omega*tau)*180/np.pi,
+             'b-', label='HP Phase shift')
 plt.yticks(np.arange(0, 105, step=15))
 plt.legend()
 plt.xlabel('Angular frequency [Hz]')
@@ -242,9 +251,12 @@ plt.show()
 
 plt.figure(figsize=(12, 8))
 #plt.subplot(2, 1, 1)
-plt.semilogx(omega, 20*np.log10(H_bp(omega)), 'b-', label='BP Transfer function')
-plt.semilogx(1/tau, 20*np.log10(H_bp(1/tau)), 'kx', label='Gain at time=1/tau')
-plt.semilogx(1/tau2, 20*np.log10(H_bp(1/tau2)), 'kx')
+plt.semilogx(omega, 20*np.log10(H_bp(omega)),
+             'b-', label='BP Transfer function')
+plt.semilogx(1/tau, 20*np.log10(H_bp(1/tau)),
+             'kx', label='Gain at time=1/tau')
+plt.semilogx(1/tau2, 20*np.log10(H_bp(1/tau2)),
+             'kx')
 plt.legend()
 plt.ylabel('Magnitude [dB]')
 plt.title('Bodeplot of RC BP filter')
