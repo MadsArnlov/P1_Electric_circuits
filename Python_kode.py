@@ -204,7 +204,6 @@ plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)),
 plt.legend()
 plt.grid(True)
 plt.ylabel('Magnitude $G(j\omega)$ [dB]')
-plt.title('Bodeplot of RC LP filter')
 
 
 plt.subplot(2, 1, 2)
