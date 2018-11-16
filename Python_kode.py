@@ -28,8 +28,6 @@ tau = R*C                                           # Time constant
 omega_c = 1/tau                                     # Cutoff frequency
 V0 = 2                                              # Initial voltage
 
-V = 4
-
 R2 = R*10
 tau2 = R2*C
 
@@ -48,7 +46,7 @@ def V_C(t):
     Returns the voltage of the capacitor as it discharges through the resistor.
 
     The formula is derived in chapter "RC-time analysis", section
-    "Zero state":
+    "Zero-input response":
         Vc(t) = e^(-t/tau)V0
     The data is offset by V0/2, for which the model is modified.
 
@@ -65,18 +63,37 @@ def V_C2(t):
     Returns the voltage of the capacitor as it charges.
 
     The formula is derived in chapter "RC time analysis", section
-    "Steady state":
-        Vc(t) = V + e^(-t/tau)(V + K)
+    "Complete response":
+        Vc(t) = V + (V0 - V)e^(-t/tau)
     The data is offset by V0/2, for which the model is modified.
 
-    The value V, is the same as V0 from the earlier function.
+    The value V, is the same as V0 from V_C(t).
 
     Parameters
     ----------
     t: float
-        The time as the circuit enters steady state
+        The time starting from 0
     """
-    return V0 + np.exp(-t/tau)*(V0 - V) - V0/2
+    return V0 + (0 - V0)*np.exp(-t/tau) - V0/2
+
+
+def V_R(t):
+    """
+    Returns the voltage of the resistor in a complete response circuit.
+
+    The formula is derived in chapter "RC time analysis", section
+    "Complete response":
+        VR(t) = -(V0 - V)e^(-t/tau)
+    The data is offset by V0/2, for which the model is modified.
+
+    The value V, is the same as V0 from V_C(t).
+
+    Parameters
+    ----------
+    t: float
+        The time starting from 0
+    """
+    return -(0 - V0)*np.exp(-t/tau) - V0/2
 
 
 def H_lp(omega):
