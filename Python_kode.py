@@ -271,7 +271,7 @@ if len(sys.argv) == 2:
         plt.semilogx(omega, 20*np.log10(H_hp(omega)),
                      'b-', label='HP Transfer function')
         plt.semilogx(1/tau, 20*np.log10(H_hp(1/tau)),
-                     'kx', label='Gain at time=1/tau')
+                     'kx', label='Gain at $\omega_c$')
         plt.plot(frequency_R*2*np.pi, magnitude_R,
                      'r-', label='Data')
         plt.legend()
@@ -281,6 +281,8 @@ if len(sys.argv) == 2:
         plt.subplot(2, 1, 2)
         plt.semilogx(omega, np.arctan(1/(omega*tau))*180/np.pi,
                      'b-', label='HP Phase shift')
+        plt.semilogx(omega_c, np.arctan(1/(omega_c*tau))*180/np.pi,
+                     'kx', label='Phase at $\omega_c$')
         plt.plot(frequency_R*2*np.pi, phase_R,
                      'r-', label='Data')
         plt.yticks(np.arange(0, 105, step=15))
