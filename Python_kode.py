@@ -53,7 +53,7 @@ an arary for time is made, t, which has the length of 5000, uniform spaced
 values between 0 and 'time_charge'.
 """
 t = np.linspace(0, time_charge, 5000)
-omega = np.linspace(1, 100000, 5000)
+omega = np.linspace(frequency_C[0], frequency_C[-1], 5000)
 
 
 def V_C(t):
