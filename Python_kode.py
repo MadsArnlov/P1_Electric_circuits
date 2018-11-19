@@ -250,6 +250,8 @@ if len(sys.argv) == 2:
                      'b-', label='LP Phase shift')
         plt.semilogx(omega_c, np.arctan(-omega_c*tau)*180/np.pi,
                      'kx', label='Phase at $\omega=\omega_c$')
+        plt.plot(frequency_C, phase_C,
+                     'r-', label='Data')
         plt.yticks(np.arange(0, -105, step=-15))
         plt.legend()
         plt.grid(True)
@@ -279,6 +281,8 @@ if len(sys.argv) == 2:
         plt.subplot(2, 1, 2)
         plt.semilogx(omega, np.arctan(1/(omega*tau))*180/np.pi,
                      'b-', label='HP Phase shift')
+        plt.plot(frequency_R, phase_R,
+                     'r-', label='Data')
         plt.yticks(np.arange(0, 105, step=15))
         plt.legend()
         plt.grid(True)
