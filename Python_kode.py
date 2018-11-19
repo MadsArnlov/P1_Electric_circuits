@@ -125,7 +125,7 @@ def H_hp(omega):
     s: float
         The complex frequency
     """
-    return 1/np.sqrt(1 + (1/(omega*tau))**2)
+    return np.sqrt(omega**2*tau**2)/np.sqrt(1 + omega**2*tau**2)
 
 
 def H_bp(omega):
@@ -248,17 +248,19 @@ plt.semilogx(omega, 20*np.log10(H_hp(omega)),
 plt.semilogx(1/tau, 20*np.log10(H_hp(1/tau)),
              'kx', label='Gain at time=1/tau')
 plt.legend()
-plt.ylabel('Magnitude [dB]')
-plt.title('Bodeplot of RC HP filter')
+plt.grid(True)
+plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
 plt.subplot(2, 1, 2)
-plt.semilogx(omega, np.arctan(omega*tau)*180/np.pi,
+plt.semilogx(omega, np.arctan(1/(omega*tau))*180/np.pi,
              'b-', label='HP Phase shift')
 plt.yticks(np.arange(0, 105, step=15))
 plt.legend()
-plt.xlabel('Angular frequency [Hz]')
-plt.ylabel('Phase [degree]')
+plt.grid(True)
+plt.xlabel('Angular frequency $\omega$ [Hz]')
+plt.ylabel('Phase $\u03B8$ [degree]')
 
+plt.savefig('bodeplot_rc_hp.png')
 plt.show()
 
 # =============================================================================
