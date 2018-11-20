@@ -24,12 +24,14 @@ time_charge = (time[5001] - time[0])
 data_magnitude_C = np.genfromtxt("bode_low_1v4753ohm96_73nf.csv", delimiter=",")
 
 frequency_C = data_magnitude_C[1:, 0]
+angular_frequency_C = frequency_C*2*np.pi
 magnitude_C = data_magnitude_C[1:, 2]
 phase_C = data_magnitude_C[1:, 3]
 
 data_magnitude_R = np.genfromtxt("bode_high_1v4753ohm96_73nf.csv", delimiter=",")
 
 frequency_R = data_magnitude_R[1:, 0]
+angular_frequency_R = frequency_R*2*np.pi
 magnitude_R = data_magnitude_R[1:, 2]
 phase_R = data_magnitude_R[1:, 3]
 
@@ -53,7 +55,7 @@ an arary for time is made, t, which has the length of 5000, uniform spaced
 values between 0 and 'time_charge'.
 """
 t = np.linspace(0, time_charge, 5000)
-omega = np.linspace(frequency_C[0]*2*np.pi, frequency_C[-1]*2*np.pi, 5000)
+omega = np.linspace(angular_frequency_C[0], angular_frequency_C[-1], 5000)
 
 
 def V_C(t):
@@ -238,19 +240,19 @@ if len(sys.argv) == 2:
                      'b-', label='LP Transfer function')
         plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)),
                      'kx', label='Gain at $\omega=\omega_c$')
-        plt.plot(frequency_C*2*np.pi, magnitude_C,
-                     'r-', label='Data')
+        plt.plot(angular_frequency_C, magnitude_C,
+                 'r-', label='Data')
         plt.legend()
         plt.grid(True)
         plt.ylabel('Magnitude $G(j\omega)$ [dB]')
-        
-        
+
+
         plt.subplot(2, 1, 2)
         plt.semilogx(omega, np.arctan(-omega*tau)*180/np.pi,
                      'b-', label='LP Phase shift')
         plt.semilogx(omega_c, np.arctan(-omega_c*tau)*180/np.pi,
                      'kx', label='Phase at $\omega=\omega_c$')
-        plt.plot(frequency_C*2*np.pi, phase_C,
+        plt.plot(angular_frequency_C, phase_C,
                      'r-', label='Data')
         plt.yticks(np.arange(0, -105, step=-15))
         plt.legend()
@@ -272,24 +274,24 @@ if len(sys.argv) == 2:
                      'b-', label='HP Transfer function')
         plt.semilogx(1/tau, 20*np.log10(H_hp(1/tau)),
                      'kx', label='Gain at $\omega_c$')
-        plt.plot(frequency_R*2*np.pi, magnitude_R,
-                     'r-', label='Data')
+        plt.plot(angular_frequency_R, magnitude_R,
+                 'r-', label='Data')
         plt.legend()
         plt.grid(True)
         plt.ylabel('Magnitude $G(j\omega)$ [dB]')
-        
+
         plt.subplot(2, 1, 2)
         plt.semilogx(omega, np.arctan(1/(omega*tau))*180/np.pi,
                      'b-', label='HP Phase shift')
         plt.semilogx(omega_c, np.arctan(1/(omega_c*tau))*180/np.pi,
                      'kx', label='Phase at $\omega_c$')
-        plt.plot(frequency_R*2*np.pi, phase_R,
-                     'r-', label='Data')
+        plt.plot(angular_frequency_R, phase_R,
+                 'r-', label='Data')
         plt.yticks(np.arange(0, 105, step=15))
         plt.legend()
         plt.grid(True)
         plt.xlabel('Angular frequency $\omega$ [Hz]')
         plt.ylabel('Phase $\u03B8$ [degree]')
-        
+
         plt.savefig('bodeplot_rc_hp.png')
         plt.show()
