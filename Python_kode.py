@@ -260,7 +260,7 @@ if len(sys.argv) == 2:
         plt.xlabel('Angular frequency $\omega$ [Hz]')
         plt.ylabel('Phase $\u03B8$ [degrees]')
         
-        plt.savefig('bodeplot_rc_lp.png')
+        plt.savefig('data_bodeplots_rc_lp.png')
         plt.show()
 
 # =============================================================================
@@ -293,5 +293,5 @@ if len(sys.argv) == 2:
         plt.xlabel('Angular frequency $\omega$ [Hz]')
         plt.ylabel('Phase $\u03B8$ [degree]')
 
-        plt.savefig('bodeplot_rc_hp.png')
+        plt.savefig('data_bodeplots_rc_hp.png')
         plt.show()
