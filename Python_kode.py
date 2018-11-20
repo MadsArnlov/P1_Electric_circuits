@@ -162,19 +162,6 @@ def H_bp(omega):
 
 
 # =============================================================================
-# Square wave
-# =============================================================================
-"A piecewise function is a simple way to create a square wave."
-t_sqwave = np.linspace(0, time_charge*2, 1000)
-
-sqwave = np.piecewise(t_sqwave,                 # The parameter
-                      [t_sqwave > time_charge,  # The first condition
-                       t_sqwave < time_charge,  # The second condition
-                       t_sqwave == 0],          # The third condition
-                      [V0/2, -V0/2, V0/2]       # The corresponding values
-                      )
-
-# =============================================================================
 # Plot of data
 # =============================================================================
 if len(sys.argv) == 2:
@@ -209,7 +196,7 @@ if len(sys.argv) == 2:
         plt.plot(time_charge + t, V_C2(t), 'tab:orange')
         plt.plot(time - time[0], cap, 'b,', label='Data points')
         plt.plot(tau, V_C(tau), 'kx', label='$V_C(tau)$')
-        plt.plot(t_sqwave, sqwave, 'k--', label='Square wave')
+        plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
