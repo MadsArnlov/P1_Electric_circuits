@@ -21,14 +21,16 @@ cap = data_time[1:, 2]
 time_charge = (time[5001] - time[0])
 
 "Magnitude of capacitor/resistor in frequency domain"
-data_magnitude_C = np.genfromtxt("bode_low_1v4753ohm96_73nf.csv", delimiter=",")
+data_magnitude_C = np.genfromtxt("bode_low_1v4753ohm96_73nf.csv",
+                                 delimiter=",")
 
 frequency_C = data_magnitude_C[1:, 0]
 angular_frequency_C = frequency_C*2*np.pi
 magnitude_C = data_magnitude_C[1:, 2]
 phase_C = data_magnitude_C[1:, 3]
 
-data_magnitude_R = np.genfromtxt("bode_high_1v4753ohm96_73nf.csv", delimiter=",")
+data_magnitude_R = np.genfromtxt("bode_high_1v4753ohm96_73nf.csv",
+                                 delimiter=",")
 
 frequency_R = data_magnitude_R[1:, 0]
 angular_frequency_R = frequency_R*2*np.pi
@@ -174,6 +176,7 @@ if len(sys.argv) == 2:
         plt.legend()
         plt.title('Data of RC-circuit')
         plt.savefig('data.png')
+        plt.show()
 
 # =============================================================================
 # Plot of mathematical model
@@ -182,14 +185,15 @@ if len(sys.argv) == 2:
     if sys.argv[1] == 'model':
         plt.figure(figsize=(12, 8))
         plt.plot(t, V_C(t), 'tab:orange')
-        plt.plot(time_charge + t, V_C2(t), 'tab:orange'
-                 , label='Mathematical model')
+        plt.plot(time_charge + t, V_C2(t), 'tab:orange',
+                 label='Mathematical model')
         plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
         plt.title('Mathematical model')
         plt.savefig('mathematical_model.png')
+        plt.show()
 
 # =============================================================================
 # Plot of data and mathematical model
@@ -207,6 +211,7 @@ if len(sys.argv) == 2:
         plt.legend()
         plt.title('Voltage across capacitor')
         plt.savefig('data_vs_model.png')
+        plt.show()
 
 # =============================================================================
 # Plot of deviation between data and mathematical model
@@ -220,6 +225,7 @@ if len(sys.argv) == 2:
         plt.ylabel('$V_{data} - V_C$ [V]')
         plt.title('Difference between data and model')
         plt.savefig('deviation.png')
+        plt.show()
 
 # =============================================================================
 # Bodeplot of RC LP filter
@@ -238,20 +244,19 @@ if len(sys.argv) == 2:
         plt.grid(True)
         plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
-
         plt.subplot(2, 1, 2)
         plt.semilogx(omega, np.arctan(-omega*tau)*180/np.pi,
                      'b-', label='LP Phase shift')
         plt.semilogx(omega_c, np.arctan(-omega_c*tau)*180/np.pi,
                      'kx', label='Phase at $\omega=\omega_c$')
         plt.plot(angular_frequency_C, phase_C,
-                     'r-', label='Data')
+                 'r-', label='Data')
         plt.yticks(np.arange(0, -105, step=-15))
         plt.legend()
         plt.grid(True)
         plt.xlabel('Angular frequency $\omega$ [Hz]')
         plt.ylabel('Phase $\u03B8$ [degrees]')
-        
+
         plt.savefig('data_bodeplots_rc_lp.png')
         plt.show()
 
