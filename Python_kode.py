@@ -199,7 +199,7 @@ if len(sys.argv) == 2:
 # Plot of data and mathematical model
 # =============================================================================
 
-    if sys.argv[1] == 'data_vs_model':
+    if sys.argv[1] == 'data_vs_model' or sys.argv[1] == 'model_vs_data':
         plt.figure(figsize=(12, 8))
         plt.plot(t, V_C(t), 'tab:orange', label='Modelled voltage')
         plt.plot(time_charge + t, V_C2(t), 'tab:orange')
@@ -240,17 +240,14 @@ if len(sys.argv) == 2:
         plt.ylabel('% Difference')
         plt.title('% Deviation')
         plt.show()
-        c = []
-        b = []
         a = ((cap[:5000] - V_C(t))*100)/V_C(t)
-        for i in a:
-            if i >= 10 or i <= -10:
-                b.append(i)
+        b = ((V_C(time_charge + t) - cap[5000:])*100)/V_C(time_charge + t)
+        c = []
         c.append(np.argwhere(a >= 10))
         c.append(np.argwhere(a <= -10))
-        ba = np.array(b)
-        sumb = sum(abs(a)/(len(a)))
-        print(sumb)
+        sum_a = sum(abs(a)/len(a))
+        sum_b = sum(abs(b)/len(b))
+        print(sum_a,"\n", sum_b)
 
 # =============================================================================
 # Bodeplot of RC LP filter
