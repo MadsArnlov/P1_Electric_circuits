@@ -167,9 +167,11 @@ def H_bp(omega):
 if len(sys.argv) == 2:
     if sys.argv[1] == 'data':
         plt.figure(figsize=(12, 8))
-        plt.plot(time - time[0], cap, 'b,')
+        plt.plot(time - time[0], cap, 'b,', label='Data')
+        plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
+        plt.legend()
         plt.title('Data of RC-circuit')
         plt.savefig('data.png')
 
@@ -180,9 +182,12 @@ if len(sys.argv) == 2:
     if sys.argv[1] == 'model':
         plt.figure(figsize=(12, 8))
         plt.plot(t, V_C(t), 'tab:orange')
-        plt.plot(time_charge + t, V_C2(t), 'tab:orange')
+        plt.plot(time_charge + t, V_C2(t), 'tab:orange'
+                 , label='Mathematical model')
+        plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
+        plt.legend()
         plt.title('Mathematical model')
         plt.savefig('mathematical_model.png')
 
