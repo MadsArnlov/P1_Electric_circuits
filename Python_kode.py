@@ -228,6 +228,31 @@ if len(sys.argv) == 2:
         plt.show()
 
 # =============================================================================
+# Fucked up error grafer - HJÆLP
+# =============================================================================
+
+    if sys.argv[1] == 'HELP':
+        plt.figure(figsize=(12, 8))
+        plt.plot(t, ((cap[:5000] - V_C(t))*100)/V_C(t), 'k.',
+                 time_charge + t, ((cap[5000:] - V_C(t))*100)/V_C(t), 'k.')
+        plt.plot(t[176], V_C(t[176]), 'bD')
+        plt.xlabel('t [s]')
+        plt.ylabel('% Difference')
+        plt.title('% Deviation')
+        plt.show()
+        c = []
+        b = []
+        a = ((cap[:5000] - V_C(t))*100)/V_C(t)
+        for i in a:
+            if i >= 10 or i <= -10:
+                b.append(i)
+        c.append(np.argwhere(a >= 10))
+        c.append(np.argwhere(a <= -10))
+        ba = np.array(b)
+        sumb = sum(abs(a)/(len(a)))
+        print(sumb)
+
+# =============================================================================
 # Bodeplot of RC LP filter
 # =============================================================================
 
