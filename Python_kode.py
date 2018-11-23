@@ -357,11 +357,13 @@ if len(sys.argv) >= 2:
 
     if sys.argv[1] == 'sine':
         if len(sys.argv) == 3:
-            w = float(sys.argv[2])
+            w = eval(sys.argv[2])
         t = np.linspace(0, 3/(w/(2*np.pi)), 5000)
+        tmax = 3/(w/(2*np.pi))
         plt.figure(figsize=(12, 8))
         plt.plot(t, V(t), 'b-', label='Input')
         plt.plot(t, V_out(t), 'r-', label='Output')
+        plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
         plt.legend()
         plt.xlabel('Time [s]')
         plt.ylabel('Voltage [V]')
