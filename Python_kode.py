@@ -210,8 +210,7 @@ if len(sys.argv) >= 2:
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
-        plt.title('Data of RC-circuit')
-        plt.savefig('data.png')
+        plt.savefig('data.pdf')
         plt.show()
 
 # =============================================================================
@@ -227,8 +226,7 @@ if len(sys.argv) >= 2:
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
-        plt.title('Mathematical model')
-        plt.savefig('mathematical_model.png')
+        plt.savefig('mathematical_model.pdf')
         plt.show()
 
 # =============================================================================
@@ -245,9 +243,8 @@ if len(sys.argv) >= 2:
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
-        plt.title('Voltage across capacitor')
 
-        plt.savefig('data_vs_model.png')
+        plt.savefig('data_vs_model.pdf')
         plt.show()
 
 # =============================================================================
@@ -260,9 +257,8 @@ if len(sys.argv) >= 2:
                  time_charge + t, cap[5000:] - V_C2(t), 'k,')
         plt.xlabel('t [s]')
         plt.ylabel('$V_{data} - V_C$ [V]')
-        plt.title('Difference between data and model')
 
-        plt.savefig('deviation.png')
+        plt.savefig('deviation.pdf')
         plt.show()
 
 # =============================================================================
@@ -317,7 +313,7 @@ if len(sys.argv) >= 2:
         plt.xlabel('Angular frequency $\omega$ [Hz]')
         plt.ylabel('Phase $\u03B8$ [degrees]')
 
-        plt.savefig('data_bodeplots_rc_lp.png')
+        plt.savefig('data_bodeplots_rc_lp.pdf')
         plt.show()
 
 # =============================================================================
@@ -350,7 +346,7 @@ if len(sys.argv) >= 2:
         plt.xlabel('Angular frequency $\omega$ [Hz]')
         plt.ylabel('Phase $\u03B8$ [degree]')
 
-        plt.savefig('data_bodeplots_rc_hp.png')
+        plt.savefig('data_bodeplots_rc_hp.pdf')
         plt.show()
 
 # =============================================================================
@@ -360,7 +356,7 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'sine':
         if len(sys.argv) == 3:
             w = eval(sys.argv[2])
-        t = np.linspace(0, 30/(w/(2*np.pi)), 5000)
+        t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
         tmax = 3/(w/(2*np.pi))
         plt.figure(figsize=(12, 8))
         plt.plot(t, V(t), 'b-', label='Input')
