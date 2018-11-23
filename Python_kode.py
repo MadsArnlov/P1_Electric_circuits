@@ -51,6 +51,8 @@ V0 = 2                                              # Initial voltage
 A = 3                                               # Amplitude of sine wave
 phi = 0                                             # Phase of sine wave
 w = omega_c                                         # Angular frequency sine
+k = 0.0005                                          # Oscilliation constant
+
 
 """
 The measurements for discharge/charge has the duration of 'time_charge',
@@ -144,7 +146,7 @@ def V_out(t):
     t: float
         The time for the sine wave
     """
-    return A*H_lp(w)[0]*np.sin(w*t + phi + H_lp(w)[1])
+    return A*H_lp(w)[0]*np.sin(w*t + phi + H_lp(w)[1]) + k*A/tau*np.exp(-t/tau)
 
 
 def H_lp(omega):
