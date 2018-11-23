@@ -360,7 +360,7 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'sine':
         if len(sys.argv) == 3:
             w = eval(sys.argv[2])
-        t = np.linspace(0, 3/(w/(2*np.pi)), 5000)
+        t = np.linspace(0, 30/(w/(2*np.pi)), 5000)
         tmax = 3/(w/(2*np.pi))
         plt.figure(figsize=(12, 8))
         plt.plot(t, V(t), 'b-', label='Input')
