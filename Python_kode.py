@@ -47,8 +47,10 @@ tau = R*C                                           # Time constant
 omega_c = 1/tau                                     # Cutoff frequency
 V0 = 2                                              # Initial voltage
 
-R2 = R*10
-tau2 = R2*C
+"Values for the input voltage V(t), which is a sine wave:"
+A = 3                                               # Amplitude of sine wave
+phi = 0                                             # Phase of sine wave
+w = 500                                             # Angular frequency sine
 
 """
 The measurements for discharge/charge has the duration of 'time_charge',
@@ -115,6 +117,36 @@ def V_R(t):
     return -(0 - V0)*np.exp(-t/tau) - V0/2
 
 
+def V(t):
+    """
+    Returns a sine wave as the input voltage.
+
+    A = Amplitude
+    w = angular frequency
+    phi = phase
+
+    Parameters
+    ----------
+    t: float
+        The time for the sine wave
+    """
+    return A*np.sin(w*t + phi)
+
+
+def V_out(t):
+    """
+    Returns a sine wave as the output voltage.
+
+    A = amplitude of input voltage
+
+    Parameters
+    ----------
+    t: float
+        The time for the sine wave
+    """
+    return A*H_lp(w)[0]*np.sin(w*t + phi + H_lp(w)[1])
+
+
 def H_lp(omega):
     """
     Returns the transfer function of a first order Low Pass filter.
@@ -127,8 +159,17 @@ def H_lp(omega):
     ----------
     s: float
         The complex frequency
+
+    Returns
+    -------
+    modulus: float
+        The length of the transfer function
+    argument: float
+        The phase of the transfer function in radians
     """
-    return 1/np.sqrt(1 + omega**2 * tau**2)
+    modulus = 1/np.sqrt(1 + omega**2 * tau**2)
+    argument = np.arctan(-omega*tau)
+    return modulus, argument
 
 
 def H_hp(omega):
@@ -143,30 +184,23 @@ def H_hp(omega):
     ----------
     s: float
         The complex frequency
+
+    Returns
+    -------
+    modulus: float
+        The length of the transfer function
+    argument: float
+        The phase of the transfer function in radians
     """
-    return np.sqrt(omega**2*tau**2)/np.sqrt(1 + omega**2*tau**2)
-
-
-def H_bp(omega):
-    """
-    Returns the transfer function of a first order Band Pass filter.
-
-    The formula is derived in chapter "Passive Analogue Filters", section
-    "Band pass filter":
-        H(s) = 1/sqrt(s^2tau^2 + 1/(s^2tau^2) + 4)
-
-    Parameters
-    ----------
-    s: float
-        The complex frequency
-    """
-    return 1/np.sqrt(4 + omega**2 * tau**2 + 1/(omega**2 * tau2**2))
+    modulus = np.sqrt(omega**2*tau**2)/np.sqrt(1 + omega**2*tau**2)
+    argument = np.arctan(1/(omega*tau))
+    return modulus, argument
 
 
 # =============================================================================
 # Plot of data
 # =============================================================================
-if len(sys.argv) == 2:
+if len(sys.argv) >= 2:
     if sys.argv[1] == 'data':
         plt.figure(figsize=(12, 8))
         plt.plot(time - time[0], cap, 'b,', label='Data')
@@ -210,6 +244,7 @@ if len(sys.argv) == 2:
         plt.ylabel('$V_C$ [V]')
         plt.legend()
         plt.title('Voltage across capacitor')
+
         plt.savefig('data_vs_model.png')
         plt.show()
 
@@ -224,6 +259,7 @@ if len(sys.argv) == 2:
         plt.xlabel('t [s]')
         plt.ylabel('$V_{data} - V_C$ [V]')
         plt.title('Difference between data and model')
+
         plt.savefig('deviation.png')
         plt.show()
 
@@ -247,7 +283,7 @@ if len(sys.argv) == 2:
         c.append(np.argwhere(a <= -10))
         sum_a = sum(abs(a)/len(a))
         sum_b = sum(abs(b)/len(b))
-        print(sum_a,"\n", sum_b)
+        print(sum_a, "\n", sum_b)
 
 # =============================================================================
 # Bodeplot of RC LP filter
@@ -313,4 +349,22 @@ if len(sys.argv) == 2:
         plt.ylabel('Phase $\u03B8$ [degree]')
 
         plt.savefig('data_bodeplots_rc_hp.png')
+        plt.show()
+
+# =============================================================================
+# Simulation of output sine wave
+# =============================================================================
+
+    if sys.argv[1] == 'sine':
+        if len(sys.argv) == 3:
+            w = float(sys.argv[2])
+        t = np.linspace(0, 3/(w/(2*np.pi)), 5000)
+        plt.figure(figsize=(12, 8))
+        plt.plot(t, V(t), 'b-', label='Input')
+        plt.plot(t, V_out(t), 'r-', label='Output')
+        plt.legend()
+        plt.xlabel('Time [s]')
+        plt.ylabel('Voltage [V]')
+
+        plt.savefig('sine.pdf')
         plt.show()
