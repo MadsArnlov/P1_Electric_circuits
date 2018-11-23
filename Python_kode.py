@@ -50,7 +50,7 @@ V0 = 2                                              # Initial voltage
 "Values for the input voltage V(t), which is a sine wave:"
 A = 3                                               # Amplitude of sine wave
 phi = 0                                             # Phase of sine wave
-w = 500                                             # Angular frequency sine
+w = omega_c                                         # Angular frequency sine
 
 """
 The measurements for discharge/charge has the duration of 'time_charge',
@@ -292,23 +292,23 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'RCLP':
         plt.figure(figsize=(12, 8))
         plt.subplot(2, 1, 1)
-        plt.semilogx(omega, 20*np.log10(H_lp(omega)),
+        plt.semilogx(omega, 20*np.log10(H_lp(omega)[0]),
                      'b-', label='LP Transfer function')
-        plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)),
-                     'kx', label='Gain at $\omega=\omega_c$')
         plt.plot(angular_frequency_C, magnitude_C,
                  'r-', label='Data')
+        plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)[0]),
+                     'kx', label='Gain at $\omega=\omega_c$')
         plt.legend()
         plt.grid(True)
         plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
         plt.subplot(2, 1, 2)
-        plt.semilogx(omega, np.arctan(-omega*tau)*180/np.pi,
+        plt.semilogx(omega, H_lp(omega)[1]*180/np.pi,
                      'b-', label='LP Phase shift')
-        plt.semilogx(omega_c, np.arctan(-omega_c*tau)*180/np.pi,
-                     'kx', label='Phase at $\omega=\omega_c$')
         plt.plot(angular_frequency_C, phase_C,
                  'r-', label='Data')
+        plt.semilogx(omega_c, H_lp(omega_c)[1]*180/np.pi,
+                     'kx', label='Phase at $\omega=\omega_c$')
         plt.yticks(np.arange(0, -105, step=-15))
         plt.legend()
         plt.grid(True)
@@ -325,23 +325,23 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'RCHP':
         plt.figure(figsize=(12, 8))
         plt.subplot(2, 1, 1)
-        plt.semilogx(omega, 20*np.log10(H_hp(omega)),
+        plt.semilogx(omega, 20*np.log10(H_hp(omega)[0]),
                      'b-', label='HP Transfer function')
-        plt.semilogx(1/tau, 20*np.log10(H_hp(1/tau)),
-                     'kx', label='Gain at $\omega_c$')
         plt.plot(angular_frequency_R, magnitude_R,
                  'r-', label='Data')
+        plt.semilogx(omega_c, 20*np.log10(H_hp(omega_c)[0]),
+                     'kx', label='Gain at $\omega_c$')
         plt.legend()
         plt.grid(True)
         plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
         plt.subplot(2, 1, 2)
-        plt.semilogx(omega, np.arctan(1/(omega*tau))*180/np.pi,
+        plt.semilogx(omega, H_hp(omega)[1]*180/np.pi,
                      'b-', label='HP Phase shift')
-        plt.semilogx(omega_c, np.arctan(1/(omega_c*tau))*180/np.pi,
-                     'kx', label='Phase at $\omega_c$')
         plt.plot(angular_frequency_R, phase_R,
                  'r-', label='Data')
+        plt.semilogx(omega_c, H_hp(omega_c)[1]*180/np.pi,
+                     'kx', label='Phase at $\omega_c$')
         plt.yticks(np.arange(0, 105, step=15))
         plt.legend()
         plt.grid(True)
@@ -367,6 +367,7 @@ if len(sys.argv) >= 2:
         plt.legend()
         plt.xlabel('Time [s]')
         plt.ylabel('Voltage [V]')
+        plt.title('Angular frequency $\omega = {:.2f}$'.format(w))
 
         plt.savefig('sine.pdf')
         plt.show()
