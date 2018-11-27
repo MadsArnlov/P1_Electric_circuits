@@ -37,15 +37,15 @@ angular_frequency_R = frequency_R*2*np.pi
 magnitude_R = data_magnitude_R[1:, 2]
 phase_R = data_magnitude_R[1:, 3]
 
-"Output sine wave across capacitor"
-data_sine = np.genfromtxt("outputWave_1v4755ohm96_54nF.csv", delimiter=",")
+"Output sine wave across capacitor for simpel input wave"
+data_sim = np.genfromtxt("outputWave_1v4755ohm96_54nF.csv", delimiter=",")
 
-f_sine = 1000
-A_sine = 1
-phi_sine = 0
-k_sine = 0
-time_sine = data_sine[1:, 0]
-sine_sine = data_sine[1:, 1]
+f_sim = 1000
+A_sim = 1
+phi_sim = 0
+k_sim = 0
+time_sim = data_sim[1:, 0]
+sine_sim = data_sim[1:, 1]
 
 "Output sine wave across capacitor with phase shift and amplitude"
 data_out = np.genfromtxt("outputWave_3_5v30phase4755ohm96_54nF500f.csv",
@@ -378,22 +378,32 @@ if len(sys.argv) >= 2:
         if len(sys.argv) == 3:
             w = eval(sys.argv[2])
         else:
-            w = f_sine*2*np.pi
-        t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
+            w = 100*2*np.pi
+        t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
         tmax = 3/(w/(2*np.pi))
-        A = A_sine
-        phi = phi_sine
-        k = k_sine
+        A = 1
+        phi = 0
+        k = 0
         plt.figure(figsize=(12, 8))
         plt.plot(t, V(t), 'b-', label='Input')
         plt.plot(t, V_out(t), 'r-', label='Output')
-        plt.plot(time_sine, sine_sine, 'k-', label='Data')
         plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
-    if sys.argv[1] == 'sineHard':
-        if len(sys.argv) == 3:
-            w = eval(sys.argv[2])
-        else:
-            w = f_out*2*np.pi
+
+    if sys.argv[1] == 'sine_sim':
+        w = f_sim*2*np.pi
+        t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
+        tmax = 3/(w/(2*np.pi))
+        A = A_sim
+        phi = phi_sim
+        k = k_sim
+        plt.figure(figsize=(12, 8))
+        plt.plot(t, V(t), 'b-', label='Input')
+        plt.plot(t, V_out(t), 'r-', label='Output')
+        plt.plot(time_sim, sine_sim, 'k-', label='Data')
+        plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
+
+    if sys.argv[1] == 'sine_hard':
+        w = f_out*2*np.pi
         t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
         tmax = 3/(w/(2*np.pi))
         A = A_out
