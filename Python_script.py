@@ -37,6 +37,27 @@ angular_frequency_R = frequency_R*2*np.pi
 magnitude_R = data_magnitude_R[1:, 2]
 phase_R = data_magnitude_R[1:, 3]
 
+"Output sine wave across capacitor"
+data_sine = np.genfromtxt("outputWave_1v4755ohm96_54nF.csv", delimiter=",")
+
+f_sine = 1000
+A_sine = 1
+phi_sine = 0
+k_sine = 0
+time_sine = data_sine[1:, 0]
+sine_sine = data_sine[1:, 1]
+
+"Output sine wave across capacitor with phase shift and amplitude"
+data_out = np.genfromtxt("outputWave_3_5v30phase4755ohm96_54nF500f.csv",
+                         delimiter=",")
+
+f_out = 500
+A_out = 3.5
+phi_out = 30*(np.pi/180)
+k_out = 0
+time_out = data_out[1:, 0]
+sine_out = data_out[1:, 1]
+
 # =============================================================================
 # Voltage drop across capacitor as a function of time
 # =============================================================================
@@ -48,10 +69,10 @@ omega_c = 1/tau                                     # Cutoff frequency
 V0 = 2                                              # Initial voltage
 
 "Values for the input voltage V(t), which is a sine wave:"
-A = 3                                               # Amplitude of sine wave
+A = 1                                               # Amplitude of sine wave
 phi = 0                                             # Phase of sine wave
-w = omega_c                                         # Angular frequency sine
-k = 0.0005                                          # Oscilliation constant
+w = 500                                             # Angular frequency sine
+k = 0.000                                           # Oscilliation constant
 
 
 """
@@ -356,12 +377,34 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'sine':
         if len(sys.argv) == 3:
             w = eval(sys.argv[2])
+        else:
+            w = f_sine*2*np.pi
         t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
         tmax = 3/(w/(2*np.pi))
+        A = A_sine
+        phi = phi_sine
+        k = k_sine
         plt.figure(figsize=(12, 8))
         plt.plot(t, V(t), 'b-', label='Input')
         plt.plot(t, V_out(t), 'r-', label='Output')
+        plt.plot(time_sine, sine_sine, 'k-', label='Data')
         plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
+    if sys.argv[1] == 'sineHard':
+        if len(sys.argv) == 3:
+            w = eval(sys.argv[2])
+        else:
+            w = f_out*2*np.pi
+        t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
+        tmax = 3/(w/(2*np.pi))
+        A = A_out
+        phi = phi_out
+        k = k_out
+        plt.figure(figsize=(12, 8))
+        plt.plot(t, V(t), 'b-', label='Input')
+        plt.plot(t, V_out(t), 'r-', label='Output')
+        plt.plot(time_out, sine_out, 'k-', label='Data')
+        plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
+
         plt.legend()
         plt.xlabel('Time [s]')
         plt.ylabel('Voltage [V]')
