@@ -388,6 +388,13 @@ if len(sys.argv) >= 2:
         plt.plot(t, V(t), 'b-', label='Input')
         plt.plot(t, V_out(t), 'r-', label='Output')
         plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
+        plt.legend()
+        plt.xlabel('Time [s]')
+        plt.ylabel('Voltage [V]')
+        plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
+
+        plt.savefig('sine.pdf')
+        plt.show()
 
     if sys.argv[1] == 'sine_sim':
         w = f_sim*2*np.pi
@@ -401,6 +408,13 @@ if len(sys.argv) >= 2:
         plt.plot(t, V_out(t), 'r-', label='Output')
         plt.plot(time_sim, sine_sim, 'k-', label='Data')
         plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
+        plt.legend()
+        plt.xlabel('Time [s]')
+        plt.ylabel('Voltage [V]')
+        plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
+
+        plt.savefig('sine_sim.pdf')
+        plt.show()
 
     if sys.argv[1] == 'sine_hard':
         w = f_out*2*np.pi
@@ -414,11 +428,10 @@ if len(sys.argv) >= 2:
         plt.plot(t, V_out(t), 'r-', label='Output')
         plt.plot(time_out, sine_out, 'k-', label='Data')
         plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
-
         plt.legend()
         plt.xlabel('Time [s]')
         plt.ylabel('Voltage [V]')
-        plt.title('Angular frequency $\omega = {:.2f}$'.format(w))
+        plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
 
-        plt.savefig('sine.pdf')
+        plt.savefig('sine_hard.pdf')
         plt.show()
