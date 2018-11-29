@@ -17,9 +17,6 @@ time = data_time[1:, 0]
 sqwave_data = data_time[1:, 1]
 cap = data_time[1:, 2]
 
-"'time_charge' is the measured time before the capacitor starts charging."
-time_charge = (time[5001] - time[0])
-
 "Magnitude of capacitor/resistor in frequency domain"
 data_magnitude_C = np.genfromtxt("bode_low_1v4753ohm96_73nf.csv",
                                  delimiter=",")
@@ -81,7 +78,7 @@ and these measurements each have 5000 points. To simulate this accordingly,
 an arary for time is made, t, which has the length of 5000, uniform spaced
 values between 0 and 'time_charge'.
 """
-t = np.linspace(0, time_charge, 5000)
+t = np.linspace(0, abs(time[0]), 5000)
 omega = np.linspace(angular_frequency_C[0], angular_frequency_C[-1], 5000)
 
 
@@ -227,7 +224,7 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'data':
         plt.figure(figsize=(12, 8))
         plt.plot(time + abs(time[0]), cap, 'b,', label='Data')
-        plt.plot(time + (time[0]), sqwave_data, 'k--', label='Square wave')
+        plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
@@ -241,7 +238,7 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'model':
         plt.figure(figsize=(12, 8))
         plt.plot(t, V_C(t), 'tab:orange')
-        plt.plot(time_charge + t, V_C2(t), 'tab:orange',
+        plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange',
                  label='Mathematical model')
         plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
@@ -257,7 +254,7 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'data_vs_model' or sys.argv[1] == 'model_vs_data':
         plt.figure(figsize=(12, 8))
         plt.plot(t, V_C(t), 'tab:orange', label='Modelled voltage')
-        plt.plot(time_charge + t, V_C2(t), 'tab:orange')
+        plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange')
         plt.plot(time + abs(time[0]), cap, 'b,', label='Data points')
         plt.plot(tau, V_C(tau), 'kx', label='$V_C(tau)$')
         plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
@@ -283,34 +280,34 @@ if len(sys.argv) >= 2:
         plt.show()
 
 # =============================================================================
-# Fucked up error grafer - HJÆLP
+# Relative percentage difference
 # =============================================================================
 
-    if sys.argv[1] == 'HELP':
-        a = ((cap[:5000] - V_C(t))*100)/V_C(t)
-        b = ((cap[5000:] - V_C2(abs(time[0]) + t))*100)/V_C2(abs(time[0]) + t)
-        plt.plot(abs(time[0]) + t, b)
-        plt.show()
-        for i in range(len(a)):
-            if a[i] >= 10:
-                a[i] = 0
-            elif a[i] <= -10:
-                a[i] = 0
-        for i in range(len(b)):
-            if b[i] <= -10:
-                b[i] = 0
-            elif b[i] >= 10:
-                b[i] = 0
-        sum_a = sum(abs(a)/len(a))
-        sum_b = sum(abs(b)/len(b))
-        print(sum_a, "\n", sum_b)
-
+    if sys.argv[1] == 'relative':
+        discharging = ((cap[:5000] - V_C(t))*100)/V_C(t)
+        charging = ((cap[5000:] - V_C2(t))*100)/V_C2(t)
+        for value in range(len(discharging)):
+            if discharging[value] >= 10:
+                discharging[value] = 0
+            elif discharging[value] <= -10:
+                discharging[value] = 0
+        for value in range(len(charging)):
+            if charging[value] <= -10:
+                charging[value] = 0
+            elif charging[value] >= 10:
+                charging[value] = 0
+        average_discharging = sum(abs(discharging)/len(discharging))
+        average_charging = sum(abs(charging)/len(charging))
+        print("The relative percentage difference of", "\n",
+              "Discharging: {:.5f}%".format(average_discharging), "\n",
+              "Charging: {:.5f}%".format(average_charging))
         plt.figure(figsize=(12, 8))
-        plt.plot(t, a, 'k.',
-                 abs(time[0]) + t, b, 'k.')
+        plt.plot(t, discharging, 'k.',
+                 abs(time[0]) + t, charging, 'k.')
         plt.xlabel('t [s]')
         plt.ylabel('% Difference')
-        plt.title('% Deviation')
+
+        plt.savefig("relative_percentage_difference.pdf")
         plt.show()
 
 # =============================================================================
