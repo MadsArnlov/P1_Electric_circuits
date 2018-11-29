@@ -289,19 +289,25 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'HELP':
         a = ((cap[:5000] - V_C(t))*100)/V_C(t)
         b = ((cap[5000:] - V_C2(abs(time[0]) + t))*100)/V_C2(abs(time[0]) + t)
-        
-        c = []
-        
-        c.append(np.argwhere(a >= 10))
-        c.append(np.argwhere(a <= -10))
+        plt.plot(abs(time[0]) + t, b)
+        plt.show()
+        for i in range(len(a)):
+            if a[i] >= 10:
+                a[i] = 0
+            elif a[i] <= -10:
+                a[i] = 0
+        for i in range(len(b)):
+            if b[i] <= -10:
+                b[i] = 0
+            elif b[i] >= 10:
+                b[i] = 0
         sum_a = sum(abs(a)/len(a))
         sum_b = sum(abs(b)/len(b))
         print(sum_a, "\n", sum_b)
 
         plt.figure(figsize=(12, 8))
-        plt.plot(t, (((cap[:5000] - V_C(t))*100)/V_C(t)) < 20, 'k.',
-                 abs(time[0]) + t, (((cap[5000:] - V_C2(t))*100)/V_C2(t)) < 20, 'k.')
-        plt.plot(t[176], V_C(t[176]), 'bD')
+        plt.plot(t, a, 'k.',
+                 abs(time[0]) + t, b, 'k.')
         plt.xlabel('t [s]')
         plt.ylabel('% Difference')
         plt.title('% Deviation')
