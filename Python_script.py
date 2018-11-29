@@ -226,8 +226,8 @@ def H_hp(omega):
 if len(sys.argv) >= 2:
     if sys.argv[1] == 'data':
         plt.figure(figsize=(12, 8))
-        plt.plot(time - time[0], cap, 'b,', label='Data')
-        plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
+        plt.plot(time + abs(time[0]), cap, 'b,', label='Data')
+        plt.plot(time + (time[0]), sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
@@ -258,9 +258,9 @@ if len(sys.argv) >= 2:
         plt.figure(figsize=(12, 8))
         plt.plot(t, V_C(t), 'tab:orange', label='Modelled voltage')
         plt.plot(time_charge + t, V_C2(t), 'tab:orange')
-        plt.plot(time - time[0], cap, 'b,', label='Data points')
+        plt.plot(time + abs(time[0]), cap, 'b,', label='Data points')
         plt.plot(tau, V_C(tau), 'kx', label='$V_C(tau)$')
-        plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
+        plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
         plt.xlabel('$t$ [s]')
         plt.ylabel('$V_C$ [V]')
         plt.legend()
@@ -275,7 +275,7 @@ if len(sys.argv) >= 2:
     if sys.argv[1] == 'deviation':
         plt.figure(figsize=(12, 8))
         plt.plot(t, cap[:5000] - V_C(t), 'k,',
-                 time_charge + t, cap[5000:] - V_C2(t), 'k,')
+                 abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
         plt.xlabel('t [s]')
         plt.ylabel('$V_{data} - V_C$ [V]')
 
@@ -287,22 +287,25 @@ if len(sys.argv) >= 2:
 # =============================================================================
 
     if sys.argv[1] == 'HELP':
-        plt.figure(figsize=(12, 8))
-        plt.plot(t, ((cap[:5000] - V_C(t))*100)/V_C(t), 'k.',
-                 time_charge + t, ((cap[5000:] - V_C(t))*100)/V_C(t), 'k.')
-        plt.plot(t[176], V_C(t[176]), 'bD')
-        plt.xlabel('t [s]')
-        plt.ylabel('% Difference')
-        plt.title('% Deviation')
-        plt.show()
         a = ((cap[:5000] - V_C(t))*100)/V_C(t)
-        b = ((V_C(time_charge + t) - cap[5000:])*100)/V_C(time_charge + t)
+        b = ((cap[5000:] - V_C2(abs(time[0]) + t))*100)/V_C2(abs(time[0]) + t)
+        
         c = []
+        
         c.append(np.argwhere(a >= 10))
         c.append(np.argwhere(a <= -10))
         sum_a = sum(abs(a)/len(a))
         sum_b = sum(abs(b)/len(b))
         print(sum_a, "\n", sum_b)
+
+        plt.figure(figsize=(12, 8))
+        plt.plot(t, (((cap[:5000] - V_C(t))*100)/V_C(t)) < 20, 'k.',
+                 abs(time[0]) + t, (((cap[5000:] - V_C2(t))*100)/V_C2(t)) < 20, 'k.')
+        plt.plot(t[176], V_C(t[176]), 'bD')
+        plt.xlabel('t [s]')
+        plt.ylabel('% Difference')
+        plt.title('% Deviation')
+        plt.show()
 
 # =============================================================================
 # Bodeplot of RC LP filter
