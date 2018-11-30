@@ -284,28 +284,34 @@ if len(sys.argv) >= 2:
 # =============================================================================
 
     if sys.argv[1] == 'relative':
-        discharging = ((cap[:5000] - V_C(t))*100)/V_C(t)
-        charging = ((cap[5000:] - V_C2(t))*100)/V_C2(t)
-        for value in range(len(discharging)):
-            if discharging[value] >= 10:
-                discharging[value] = 0
-            elif discharging[value] <= -10:
-                discharging[value] = 0
-        for value in range(len(charging)):
-            if charging[value] <= -10:
-                charging[value] = 0
-            elif charging[value] >= 10:
-                charging[value] = 0
-        average_discharging = sum(abs(discharging)/len(discharging))
-        average_charging = sum(abs(charging)/len(charging))
-        print("The relative percentage difference of", "\n",
-              "Discharging: {:.5f}%".format(average_discharging), "\n",
-              "Charging: {:.5f}%".format(average_charging))
+        discharging = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
+        charging = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
+#        for value in range(len(discharging)):
+#            if discharging[value] >= 100:
+#                discharging[value] = 0
+#            elif discharging[value] <= -100:
+#                discharging[value] = 0
+#        for value in range(len(charging)):
+#            if charging[value] <= -100:
+#                charging[value] = 0
+#            elif charging[value] >= 100:
+#                charging[value] = 0
+#        average_discharging = sum(abs(discharging)/len(discharging))
+#        average_charging = sum(abs(charging)/len(charging))
+#        print("The relative percentage difference of", "\n",
+#              "Discharging: {:.5f}%".format(average_discharging), "\n",
+#              "Charging: {:.5f}%".format(average_charging))
         plt.figure(figsize=(12, 8))
-        plt.plot(t, discharging, 'k.',
-                 abs(time[0]) + t, charging, 'k.')
-        plt.xlabel('t [s]')
+        plt.subplot(2, 1, 1)
+        plt.plot(t, cap[:5000] - V_C(t), 'k,',
+                 abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
+        plt.ylabel('$V_{data} - V_C$ [V]')
+
+        plt.subplot(2, 1, 2)
+        plt.plot(t, discharging, 'k,',
+                 abs(time[0]) + t, charging, 'k,')
         plt.ylabel('% Difference')
+        plt.xlabel('t [s]')
 
         plt.savefig("relative_percentage_difference.pdf")
         plt.show()
@@ -431,9 +437,9 @@ if len(sys.argv) >= 2:
         k = k_out
         plt.figure(figsize=(12, 8))
         plt.plot(t, V(t), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
-        plt.plot(t, V_out(t), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], phi + (H_lp(w)[1]*(180/np.pi))))
-        plt.plot(time_out, sine_out, 'k-', label='Data')
+        plt.plot(t, V_out(t), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
         plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
+        plt.plot(time_out, sine_out, 'k-', label='Data')
         plt.legend()
         plt.xlabel('Time [s]')
         plt.ylabel('Voltage [V]')
