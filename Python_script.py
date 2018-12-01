@@ -404,7 +404,7 @@ def sine():
     plt.show()
 
 
-def sine_sim():
+def sine_simulation():
     w = f_sim*2*np.pi
     t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
     A = A_sim
@@ -448,7 +448,7 @@ if len(sys.argv) >= 2:
     if sys.argv[1].lower() == 'sine_hard':
         sine_hard()
     elif sys.argv[1].lower() == 'sine_sim':
-        sine_sim()
+        sine_simulation()
     elif sys.argv[1].upper() == 'RCHP':
         RCHP()
     elif sys.argv[1].lower() == 'sine':
