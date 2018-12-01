@@ -220,72 +220,77 @@ def H_hp(omega):
 # =============================================================================
 # Plot of data
 # =============================================================================
-if len(sys.argv) >= 2:
-    if sys.argv[1] == 'data':
-        plt.figure(figsize=(12, 8))
-        plt.plot(time + abs(time[0]), cap, 'b,', label='Data')
-        plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
-        plt.xlabel('$t$ [s]')
-        plt.ylabel('$V_C$ [V]')
-        plt.legend()
-        plt.savefig('data.pdf')
-        plt.show()
+
+
+def data():
+    plt.figure(figsize=(12, 8))
+    plt.plot(time + abs(time[0]), cap, 'b,', label='Data')
+    plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
+    plt.xlabel('$t$ [s]')
+    plt.ylabel('$V_C$ [V]')
+    plt.legend()
+    plt.savefig('data.pdf')
+    plt.show()
 
 # =============================================================================
 # Plot of mathematical model
 # =============================================================================
 
-    if sys.argv[1] == 'model':
-        plt.figure(figsize=(12, 8))
-        plt.plot(t, V_C(t), 'tab:orange')
-        plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange',
-                 label='Mathematical model')
-        plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
-        plt.xlabel('$t$ [s]')
-        plt.ylabel('$V_C$ [V]')
-        plt.legend()
-        plt.savefig('mathematical_model.pdf')
-        plt.show()
+
+def model():
+    plt.figure(figsize=(12, 8))
+    plt.plot(t, V_C(t), 'tab:orange')
+    plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange',
+             label='Mathematical model')
+    plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
+    plt.xlabel('$t$ [s]')
+    plt.ylabel('$V_C$ [V]')
+    plt.legend()
+    plt.savefig('mathematical_model.pdf')
+    plt.show()
 
 # =============================================================================
 # Plot of data and mathematical model
 # =============================================================================
 
-    if sys.argv[1] == 'data_vs_model' or sys.argv[1] == 'model_vs_data':
-        plt.figure(figsize=(12, 8))
-        plt.plot(t, V_C(t), 'tab:orange', label='Modelled voltage')
-        plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange')
-        plt.plot(time + abs(time[0]), cap, 'b,', label='Data points')
-        plt.plot(tau, V_C(tau), 'kx', label='$V_C(tau)$')
-        plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
-        plt.xlabel('$t$ [s]')
-        plt.ylabel('$V_C$ [V]')
-        plt.legend()
 
-        plt.savefig('data_vs_model.pdf')
-        plt.show()
+def data_vs_model():
+    plt.figure(figsize=(12, 8))
+    plt.plot(t, V_C(t), 'tab:orange', label='Modelled voltage')
+    plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange')
+    plt.plot(time + abs(time[0]), cap, 'b,', label='Data points')
+    plt.plot(tau, V_C(tau), 'kx', label='$V_C(tau)$')
+    plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
+    plt.xlabel('$t$ [s]')
+    plt.ylabel('$V_C$ [V]')
+    plt.legend()
+
+    plt.savefig('data_vs_model.pdf')
+    plt.show()
 
 # =============================================================================
 # Plot of deviation between data and mathematical model
 # =============================================================================
 
-    if sys.argv[1] == 'deviation':
-        plt.figure(figsize=(12, 8))
-        plt.plot(t, cap[:5000] - V_C(t), 'k,',
-                 abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
-        plt.xlabel('t [s]')
-        plt.ylabel('$V_{data} - V_C$ [V]')
 
-        plt.savefig('deviation.pdf')
-        plt.show()
+def deviation():
+    plt.figure(figsize=(12, 8))
+    plt.plot(t, cap[:5000] - V_C(t), 'k,',
+             abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
+    plt.xlabel('t [s]')
+    plt.ylabel('$V_{data} - V_C$ [V]')
+
+    plt.savefig('deviation.pdf')
+    plt.show()
 
 # =============================================================================
 # Relative percentage difference
 # =============================================================================
 
-    if sys.argv[1] == 'relative':
-        discharging = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
-        charging = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
+
+def relative():
+    discharging = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
+    charging = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
 #        for value in range(len(discharging)):
 #            if discharging[value] >= 100:
 #                discharging[value] = 0
@@ -301,149 +306,165 @@ if len(sys.argv) >= 2:
 #        print("The relative percentage difference of", "\n",
 #              "Discharging: {:.5f}%".format(average_discharging), "\n",
 #              "Charging: {:.5f}%".format(average_charging))
-        plt.figure(figsize=(12, 8))
-        plt.subplot(2, 1, 1)
-        plt.plot(t, cap[:5000] - V_C(t), 'k,',
-                 abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
-        plt.ylabel('$V_{data} - V_C$ [V]')
+    plt.figure(figsize=(12, 8))
+    plt.subplot(2, 1, 1)
+    plt.plot(t, cap[:5000] - V_C(t), 'k,',
+             abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
+    plt.ylabel('$V_{data} - V_C$ [V]')
 
-        plt.subplot(2, 1, 2)
-        plt.plot(t, discharging, 'k,',
-                 abs(time[0]) + t, charging, 'k,')
-        plt.ylabel('% Difference')
-        plt.xlabel('t [s]')
+    plt.subplot(2, 1, 2)
+    plt.plot(t, discharging, 'k,',
+             abs(time[0]) + t, charging, 'k,')
+    plt.ylabel('% Difference')
+    plt.xlabel('t [s]')
 
-        plt.savefig("relative_percentage_difference.pdf")
-        plt.show()
+    plt.savefig("relative_percentage_difference.pdf")
+    plt.show()
 
 # =============================================================================
 # Bodeplot of RC LP filter
 # =============================================================================
 
-    if sys.argv[1] == 'RCLP':
-        plt.figure(figsize=(12, 8))
-        plt.subplot(2, 1, 1)
-        plt.semilogx(omega, 20*np.log10(H_lp(omega)[0]),
-                     'b-', label='LP Transfer function')
-        plt.plot(angular_frequency_C, magnitude_C,
-                 'r-', label='Data')
-        plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)[0]),
-                     'kx', label='Gain at $\omega=\omega_c$')
-        plt.legend()
-        plt.grid(True)
-        plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
-        plt.subplot(2, 1, 2)
-        plt.semilogx(omega, H_lp(omega)[1]*180/np.pi,
-                     'b-', label='LP Phase shift')
-        plt.plot(angular_frequency_C, phase_C,
-                 'r-', label='Data')
-        plt.semilogx(omega_c, H_lp(omega_c)[1]*180/np.pi,
-                     'kx', label='Phase at $\omega=\omega_c$')
-        plt.yticks(np.arange(0, -105, step=-15))
-        plt.legend()
-        plt.grid(True)
-        plt.xlabel('Angular frequency $\omega$ [Hz]')
-        plt.ylabel('Phase $\u03B8$ [degrees]')
+def RCLP():
+    plt.figure(figsize=(12, 8))
+    plt.subplot(2, 1, 1)
+    plt.semilogx(omega, 20*np.log10(H_lp(omega)[0]), 'b-', label='LP Transfer function')
+    plt.plot(angular_frequency_C, magnitude_C, 'r-', label='Data')
+    plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)[0]), 'kx', label='Gain at $\omega=\omega_c$')
+    plt.legend()
+    plt.grid(True)
+    plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
-        plt.savefig('data_bodeplots_rc_lp.pdf')
-        plt.show()
+    plt.subplot(2, 1, 2)
+    plt.semilogx(omega, H_lp(omega)[1]*180/np.pi, 'b-', label='LP Phase shift')
+    plt.plot(angular_frequency_C, phase_C, 'r-', label='Data')
+    plt.semilogx(omega_c, H_lp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega=\omega_c$')
+    plt.yticks(np.arange(0, -105, step=-15))
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel('Angular frequency $\omega$ [Hz]')
+    plt.ylabel('Phase $\u03B8$ [degrees]')
+
+    plt.savefig('data_bodeplots_rc_lp.pdf')
+    plt.show()
 
 # =============================================================================
 # Bodeplot of RC HP filter
 # =============================================================================
 
-    if sys.argv[1] == 'RCHP':
-        plt.figure(figsize=(12, 8))
-        plt.subplot(2, 1, 1)
-        plt.semilogx(omega, 20*np.log10(H_hp(omega)[0]),
-                     'b-', label='HP Transfer function')
-        plt.plot(angular_frequency_R, magnitude_R,
-                 'r-', label='Data')
-        plt.semilogx(omega_c, 20*np.log10(H_hp(omega_c)[0]),
-                     'kx', label='Gain at $\omega_c$')
-        plt.legend()
-        plt.grid(True)
-        plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
-        plt.subplot(2, 1, 2)
-        plt.semilogx(omega, H_hp(omega)[1]*180/np.pi,
-                     'b-', label='HP Phase shift')
-        plt.plot(angular_frequency_R, phase_R,
-                 'r-', label='Data')
-        plt.semilogx(omega_c, H_hp(omega_c)[1]*180/np.pi,
-                     'kx', label='Phase at $\omega_c$')
-        plt.yticks(np.arange(0, 105, step=15))
-        plt.legend()
-        plt.grid(True)
-        plt.xlabel('Angular frequency $\omega$ [Hz]')
-        plt.ylabel('Phase $\u03B8$ [degree]')
+def RCHP():
+    plt.figure(figsize=(12, 8))
+    plt.subplot(2, 1, 1)
+    plt.semilogx(omega, 20*np.log10(H_hp(omega)[0]), 'b-', label='HP Transfer function')
+    plt.plot(angular_frequency_R, magnitude_R, 'r-', label='Data')
+    plt.semilogx(omega_c, 20*np.log10(H_hp(omega_c)[0]), 'kx', label='Gain at $\omega_c$')
+    plt.legend()
+    plt.grid(True)
+    plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
-        plt.savefig('data_bodeplots_rc_hp.pdf')
-        plt.show()
+    plt.subplot(2, 1, 2)
+    plt.semilogx(omega, H_hp(omega)[1]*180/np.pi, 'b-', label='HP Phase shift')
+    plt.plot(angular_frequency_R, phase_R, 'r-', label='Data')
+    plt.semilogx(omega_c, H_hp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega_c$')
+    plt.yticks(np.arange(0, 105, step=15))
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel('Angular frequency $\omega$ [Hz]')
+    plt.ylabel('Phase $\u03B8$ [degree]')
+
+    plt.savefig('data_bodeplots_rc_hp.pdf')
+    plt.show()
 
 # =============================================================================
 # Simulation of output sine wave
 # =============================================================================
 
-    if sys.argv[1] == 'sine':
-        if len(sys.argv) == 3:
-            w = eval(sys.argv[2])
-        else:
-            w = 100*2*np.pi
-        t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
-        tmax = 3/(w/(2*np.pi))
-        A = 1
-        phi = 0
-        k = 0
-        plt.figure(figsize=(12, 8))
-        plt.plot(t, V(t), 'b-', label='Input')
-        plt.plot(t, V_out(t), 'r-', label='Output')
-        plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
-        plt.legend()
-        plt.xlabel('Time [s]')
-        plt.ylabel('Voltage [V]')
-        plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
 
-        plt.savefig('sine.pdf')
-        plt.show()
+def sine():
+    if len(sys.argv) == 3:
+        w = eval(sys.argv[2])
+    else:
+        w = 100*2*np.pi
+    t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
+    tmax = 3/(w/(2*np.pi))
+    A = 1
+    phi = 0
+    k = 0
+    plt.figure(figsize=(12, 8))
+    plt.plot(t, V(t), 'b-', label='Input')
+    plt.plot(t, V_out(t), 'r-', label='Output')
+    plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
+    plt.legend()
+    plt.xlabel('Time [s]')
+    plt.ylabel('Voltage [V]')
+    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
 
-    if sys.argv[1] == 'sine_sim':
-        w = f_sim*2*np.pi
-        t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
-        tmax = 3/(w/(2*np.pi))
-        A = A_sim
-        phi = phi_sim
-        k = k_sim
-        plt.figure(figsize=(12, 8))
-        plt.plot(t, V(t), 'b-', label='Input')
-        plt.plot(t, V_out(t), 'r-', label='Output')
-        plt.plot(time_sim, sine_sim, 'k-', label='Data')
-        plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
-        plt.legend()
-        plt.xlabel('Time [s]')
-        plt.ylabel('Voltage [V]')
-        plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
+    plt.savefig('sine.pdf')
+    plt.show()
 
-        plt.savefig('sine_sim.pdf')
-        plt.show()
 
-    if sys.argv[1] == 'sine_hard':
-        w = f_out*2*np.pi
-        t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
-        tmax = 3/(w/(2*np.pi))
-        A = A_out
-        phi = phi_out
-        k = k_out
-        plt.figure(figsize=(12, 8))
-        plt.plot(t, V(t), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
-        plt.plot(t, V_out(t), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
-        plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
-        plt.plot(time_out, sine_out, 'k-', label='Data')
-        plt.legend()
-        plt.xlabel('Time [s]')
-        plt.ylabel('Voltage [V]')
-        plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.0f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
+def sine_sim():
+    w = f_sim*2*np.pi
+    t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
+    tmax = 3/(w/(2*np.pi))
+    A = A_sim
+    phi = phi_sim
+    k = k_sim
+    plt.figure(figsize=(12, 8))
+    plt.plot(t, V(t), 'b-', label='Input')
+    plt.plot(t, V_out(t), 'r-', label='Output')
+    plt.plot(time_sim, sine_sim, 'k-', label='Data')
+    plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
+    plt.legend()
+    plt.xlabel('Time [s]')
+    plt.ylabel('Voltage [V]')
+    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
 
-        plt.savefig('sine_hard.pdf')
-        plt.show()
+    plt.savefig('sine_sim.pdf')
+    plt.show()
+
+
+def sine_hard():
+    w = f_out*2*np.pi
+    t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
+    tmax = 3/(w/(2*np.pi))
+    A = A_out
+    phi = phi_out
+    k = k_out
+    plt.figure(figsize=(12, 8))
+    plt.plot(t, V(t), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
+    plt.plot(t, V_out(t), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
+    plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
+    plt.plot(time_out, sine_out, 'k-', label='Data')
+    plt.legend()
+    plt.xlabel('Time [s]')
+    plt.ylabel('Voltage [V]')
+    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.0f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
+
+    plt.savefig('sine_hard.pdf')
+    plt.show()
+
+
+if len(sys.argv) >= 2:
+    if sys.argv[1].lower() == 'sine_hard':
+        sine_hard()
+    elif sys.argv[1].lower() == 'sine_sim':
+        sine_sim()
+    elif sys.argv[1].upper() == 'RCHP':
+        RCHP()
+    elif sys.argv[1].lower() == 'sine':
+        sine()
+    elif sys.argv[1].lower() == 'relative':
+        relative()
+    elif sys.argv[1].lower() == 'deviation':
+        deviation()
+    elif sys.argv[1].upper() == 'RCLP':
+        RCLP()
+    elif sys.argv[1].lower() == 'data_vs_model' or sys.argv[1] == 'model_vs_data':
+        data_vs_model()
+    elif sys.argv[1].lower() == 'model':
+        model()
+    elif sys.argv[1].lower() == 'data':
+        data()
