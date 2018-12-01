@@ -42,7 +42,7 @@ A_sim = 1
 phi_sim = 0
 k_sim = 0
 time_sim = data_sim[1:, 0]
-sine_sim = data_sim[1:, 1]
+sine_simple = data_sim[1:, 1]
 
 "Output sine wave across capacitor with phase shift and amplitude"
 data_out = np.genfromtxt("outputWave_3_5v30phase4755ohm96_54nF500f.csv",
@@ -137,7 +137,7 @@ def V_R(t):
     return -(0 - V0)*np.exp(-t/tau) - V0/2
 
 
-def V(t):
+def V(t, w):
     """
     Returns a sine wave as the input voltage.
 
@@ -153,7 +153,7 @@ def V(t):
     return A*np.sin(w*t + phi)
 
 
-def V_out(t):
+def V_out(t, w):
     """
     Returns a sine wave as the output voltage.
 
@@ -388,13 +388,12 @@ def sine():
     else:
         w = 100*2*np.pi
     t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
-    tmax = 3/(w/(2*np.pi))
     A = 1
     phi = 0
     k = 0
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t), 'b-', label='Input')
-    plt.plot(t, V_out(t), 'r-', label='Output')
+    plt.plot(t, V(t, w), 'b-', label='Input')
+    plt.plot(t, V_out(t, w), 'r-', label='Output')
     plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
     plt.legend()
     plt.xlabel('Time [s]')
@@ -408,14 +407,13 @@ def sine():
 def sine_sim():
     w = f_sim*2*np.pi
     t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
-    tmax = 3/(w/(2*np.pi))
     A = A_sim
     phi = phi_sim
     k = k_sim
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t), 'b-', label='Input')
-    plt.plot(t, V_out(t), 'r-', label='Output')
-    plt.plot(time_sim, sine_sim, 'k-', label='Data')
+    plt.plot(t, V(t, w), 'b-', label='Input')
+    plt.plot(t, V_out(t, w), 'r-', label='Output')
+    plt.plot(time_sim, sine_simple, 'k-', label='Data')
     plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
     plt.legend()
     plt.xlabel('Time [s]')
@@ -429,13 +427,12 @@ def sine_sim():
 def sine_hard():
     w = f_out*2*np.pi
     t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
-    tmax = 3/(w/(2*np.pi))
     A = A_out
     phi = phi_out
     k = k_out
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
-    plt.plot(t, V_out(t), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
+    plt.plot(t, V(t, w), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
+    plt.plot(t, V_out(t, w), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
     plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
     plt.plot(time_out, sine_out, 'k-', label='Data')
     plt.legend()
