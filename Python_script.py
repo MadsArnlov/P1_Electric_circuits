@@ -137,7 +137,7 @@ def V_R(t):
     return -(0 - V0)*np.exp(-t/tau) - V0/2
 
 
-def V(t, w):
+def V(t, w, phi, A):
     """
     Returns a sine wave as the input voltage.
 
@@ -153,7 +153,7 @@ def V(t, w):
     return A*np.sin(w*t + phi)
 
 
-def V_out(t, w):
+def V_out(t, w, phi, A, k):
     """
     Returns a sine wave as the output voltage.
 
@@ -411,8 +411,8 @@ def sine_simulation():
     phi = phi_sim
     k = k_sim
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w), 'b-', label='Input')
-    plt.plot(t, V_out(t, w), 'r-', label='Output')
+    plt.plot(t, V(t, w, phi, A), 'b-', label='Input')
+    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='Output')
     plt.plot(time_sim, sine_simple, 'k-', label='Data')
     plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
     plt.legend()
@@ -431,8 +431,8 @@ def sine_hard():
     phi = phi_out
     k = k_out
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
-    plt.plot(t, V_out(t, w), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
+    plt.plot(t, V(t, w, phi, A), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
+    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
     plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
     plt.plot(time_out, sine_out, 'k-', label='Data')
     plt.legend()
