@@ -392,8 +392,8 @@ def sine():
     phi = 0
     k = 0
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w), 'b-', label='Input')
-    plt.plot(t, V_out(t, w), 'r-', label='Output')
+    plt.plot(t, V(t, w, phi, A), 'b-', label='Input')
+    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='Output')
     plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
     plt.legend()
     plt.xlabel('Time [s]')
