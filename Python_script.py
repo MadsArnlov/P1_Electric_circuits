@@ -295,19 +295,19 @@ def relative():
     charging1 = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
     for value in range(len(discharging)):
         if discharging[value] >= 100:
-            discharging[value] = 0
+            discharging[value] = None
         elif discharging[value] <= -100:
-            discharging[value] = 0
+            discharging[value] = None
     for value in range(len(charging)):
         if charging[value] <= -100:
-            charging[value] = 0
+            charging[value] = None
         elif charging[value] >= 100:
-            charging[value] = 0
-    average_discharging = sum(abs(discharging)/len(discharging))
-    average_charging = sum(abs(charging)/len(charging))
-    print("The relative percentage difference of", "\n",
-          "Discharging: {:.5f}%".format(average_discharging), "\n",
-          "Charging: {:.5f}%".format(average_charging))
+            charging[value] = None
+#    average_discharging = sum(abs(discharging)/len(discharging))
+#    average_charging = sum(abs(charging)/len(charging))
+#    print("The relative percentage difference of", "\n",
+#          "Discharging: {:.5f}%".format(average_discharging), "\n",
+#          "Charging: {:.5f}%".format(average_charging))
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
     plt.plot(t, discharging1, 'k,',
