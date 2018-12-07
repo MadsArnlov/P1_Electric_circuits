@@ -291,21 +291,21 @@ def deviation():
 def relative():
     discharging = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
     charging = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
-#        for value in range(len(discharging)):
-#            if discharging[value] >= 100:
-#                discharging[value] = 0
-#            elif discharging[value] <= -100:
-#                discharging[value] = 0
-#        for value in range(len(charging)):
-#            if charging[value] <= -100:
-#                charging[value] = 0
-#            elif charging[value] >= 100:
-#                charging[value] = 0
-#        average_discharging = sum(abs(discharging)/len(discharging))
-#        average_charging = sum(abs(charging)/len(charging))
-#        print("The relative percentage difference of", "\n",
-#              "Discharging: {:.5f}%".format(average_discharging), "\n",
-#              "Charging: {:.5f}%".format(average_charging))
+    for value in range(len(discharging)):
+        if discharging[value] >= 100:
+            discharging[value] = 0
+        elif discharging[value] <= -100:
+            discharging[value] = 0
+    for value in range(len(charging)):
+        if charging[value] <= -100:
+            charging[value] = 0
+        elif charging[value] >= 100:
+            charging[value] = 0
+    average_discharging = sum(abs(discharging)/len(discharging))
+    average_charging = sum(abs(charging)/len(charging))
+    print("The relative percentage difference of", "\n",
+          "Discharging: {:.5f}%".format(average_discharging), "\n",
+          "Charging: {:.5f}%".format(average_charging))
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
     plt.plot(t, cap[:5000] - V_C(t), 'k,',
@@ -329,16 +329,16 @@ def relative():
 def RCLP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, 20*np.log10(H_lp(omega)[0]), 'b-', label='LP Transfer function')
-    plt.plot(angular_frequency_C, magnitude_C, 'r-', label='Data')
+    plt.semilogx(omega, 20*np.log10(H_lp(omega)[0]), 'tab:orange', label='LP Transfer function')
+    plt.plot(angular_frequency_C, magnitude_C, 'b-', label='Data')
     plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)[0]), 'kx', label='Gain at $\omega=\omega_c$')
     plt.legend()
     plt.grid(True)
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_lp(omega)[1]*180/np.pi, 'b-', label='LP Phase shift')
-    plt.plot(angular_frequency_C, phase_C, 'r-', label='Data')
+    plt.semilogx(omega, H_lp(omega)[1]*180/np.pi, 'tab:orange', label='LP Phase shift')
+    plt.plot(angular_frequency_C, phase_C, 'b-', label='Data')
     plt.semilogx(omega_c, H_lp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega=\omega_c$')
     plt.yticks(np.arange(0, -105, step=-15))
     plt.legend()
@@ -357,16 +357,16 @@ def RCLP():
 def RCHP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, 20*np.log10(H_hp(omega)[0]), 'b-', label='HP Transfer function')
-    plt.plot(angular_frequency_R, magnitude_R, 'r-', label='Data')
+    plt.semilogx(omega, 20*np.log10(H_hp(omega)[0]), 'tab:orange', label='HP Transfer function')
+    plt.plot(angular_frequency_R, magnitude_R, 'b-', label='Data')
     plt.semilogx(omega_c, 20*np.log10(H_hp(omega_c)[0]), 'kx', label='Gain at $\omega_c$')
     plt.legend()
     plt.grid(True)
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_hp(omega)[1]*180/np.pi, 'b-', label='HP Phase shift')
-    plt.plot(angular_frequency_R, phase_R, 'r-', label='Data')
+    plt.semilogx(omega, H_hp(omega)[1]*180/np.pi, 'tab:orange', label='HP Phase shift')
+    plt.plot(angular_frequency_R, phase_R, 'b-', label='Data')
     plt.semilogx(omega_c, H_hp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega_c$')
     plt.yticks(np.arange(0, 105, step=15))
     plt.legend()
@@ -392,8 +392,8 @@ def sine():
     phi = 0
     k = 0
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w, phi, A), 'b-', label='Input')
-    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='Output')
+    plt.plot(t, V(t, w, phi, A), 'k-', label='Input')
+    plt.plot(t, V_out(t, w, phi, A, k), 'tab:orange', label='Output')
     plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
     plt.legend()
     plt.xlabel('Time [s]')
@@ -411,9 +411,9 @@ def sine_simulation():
     phi = phi_sim
     k = k_sim
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w, phi, A), 'b-', label='Input')
-    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='Output')
-    plt.plot(time_sim, sine_simple, 'k-', label='Data')
+    plt.plot(t, V(t, w, phi, A), 'k-', label='Input')
+    plt.plot(t, V_out(t, w, phi, A, k), 'tab:orange', label='Output')
+    plt.plot(time_sim, sine_simple, 'b-', label='Data')
     plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
     plt.legend()
     plt.xlabel('Time [s]')
@@ -431,10 +431,10 @@ def sine_hard():
     phi = phi_out
     k = k_out
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w, phi, A), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
-    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
+    plt.plot(t, V(t, w, phi, A), 'k-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
+    plt.plot(t, V_out(t, w, phi, A, k), 'tab:orange', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
     plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
-    plt.plot(time_out, sine_out, 'k-', label='Data')
+    plt.plot(time_out, sine_out, 'b--', label='Data')
     plt.legend()
     plt.xlabel('Time [s]')
     plt.ylabel('Voltage [V]')
