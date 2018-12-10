@@ -34,23 +34,13 @@ angular_frequency_R = frequency_R*2*np.pi
 magnitude_R = data_magnitude_R[1:, 2]
 phase_R = data_magnitude_R[1:, 3]
 
-"Output sine wave across capacitor for simpel input wave"
-data_sim = np.genfromtxt("outputWave_1v4755ohm96_54nF.csv", delimiter=",")
-
-f_sim = 1000
-A_sim = 1
-phi_sim = 0
-k_sim = 0
-time_sim = data_sim[1:, 0]
-sine_simple = data_sim[1:, 1]
-
 "Output sine wave across capacitor with phase shift and amplitude"
 data_out = np.genfromtxt("outputWave_3_5v30phase4755ohm96_54nF500f.csv",
                          delimiter=",")
 
 f_out = 500
 A_out = 3.5
-phi_out = 30*(np.pi/180)
+phi_out = 30
 k_out = 0
 time_out = data_out[1:, 0]
 sine_out = data_out[1:, 1]
@@ -79,7 +69,14 @@ an arary for time is made, t, which has the length of 5000, uniform spaced
 values between 0 and 'time_charge'.
 """
 t = np.linspace(0, abs(time[0]), 5000)
-omega = np.linspace(angular_frequency_C[0], angular_frequency_C[-1], 5000)
+
+"""
+The frequencies are distributed evenly across the logarithmic values,
+using the start and end of the collected data. The data has 200 points, for
+which reason the model also have 200 points.
+"""
+omega = np.logspace(np.log10(angular_frequency_C[0]),
+                    np.log10(angular_frequency_C[-1]), num=200)
 
 
 def V_C(t):
@@ -150,7 +147,7 @@ def V(t, w, phi, A):
     phi: float
         The phase
     """
-    return A*np.sin(w*t + phi)
+    return A*np.sin(w*t + phi*(np.pi/180))
 
 
 def V_out(t, w, phi, A, k):
@@ -168,7 +165,7 @@ def V_out(t, w, phi, A, k):
     k: float
         The oscilliation constant
     """
-    return A*H_lp(w)[0]*np.sin(w*t + phi + H_lp(w)[1]) + k*A/tau*np.exp(-t/tau)
+    return A*H_lp(w)[0]*np.sin(w*t + (phi + H_lp(w)[2])*(np.pi/180)) + k*A/tau*np.exp(-t/tau)
 
 
 def H_lp(omega):
@@ -192,8 +189,9 @@ def H_lp(omega):
         The phase of the transfer function in radians
     """
     modulus = 1/np.sqrt(1 + omega**2 * tau**2)
-    argument = np.arctan(-omega*tau)
-    return modulus, argument
+    magnitude = 20*np.log10(modulus)
+    argument = np.arctan(-omega*tau)*180/np.pi
+    return modulus, magnitude, argument
 
 
 def H_hp(omega):
@@ -216,9 +214,10 @@ def H_hp(omega):
     argument: float
         The phase of the transfer function in radians
     """
-    modulus = np.sqrt(omega**2*tau**2)/np.sqrt(1 + omega**2*tau**2)
-    argument = np.arctan(1/(omega*tau))
-    return modulus, argument
+    modulus = np.sqrt(omega**2 * tau**2)/np.sqrt(1 + omega**2 * tau**2)
+    magnitude = 20*np.log10(modulus)
+    argument = np.arctan(1/(omega*tau))*180/np.pi
+    return modulus, magnitude, argument
 
 
 # =============================================================================
@@ -295,26 +294,27 @@ def deviation():
 def relative():
     discharging = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
     charging = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
-#        for value in range(len(discharging)):
-#            if discharging[value] >= 100:
-#                discharging[value] = 0
-#            elif discharging[value] <= -100:
-#                discharging[value] = 0
-#        for value in range(len(charging)):
-#            if charging[value] <= -100:
-#                charging[value] = 0
-#            elif charging[value] >= 100:
-#                charging[value] = 0
-#        average_discharging = sum(abs(discharging)/len(discharging))
-#        average_charging = sum(abs(charging)/len(charging))
-#        print("The relative percentage difference of", "\n",
-#              "Discharging: {:.5f}%".format(average_discharging), "\n",
-#              "Charging: {:.5f}%".format(average_charging))
+    discharging1 = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
+    charging1 = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
+    for value in range(len(discharging)):
+        if discharging[value] >= 100:
+            discharging[value] = None
+        elif discharging[value] <= -100:
+            discharging[value] = None
+    for value in range(len(charging)):
+        if charging[value] <= -100:
+            charging[value] = None
+        elif charging[value] >= 100:
+            charging[value] = None
+    average_discharging = sum(abs(discharging)/len(discharging))
+    average_charging = sum(abs(charging)/len(charging))
+    print("The percentage difference of", "\n",
+          "Discharging: {:.5f}%".format(average_discharging), "\n",
+          "Charging:    {:.5f}%".format(average_charging))
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.plot(t, cap[:5000] - V_C(t), 'k,',
-             abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
-    plt.ylabel('$V_{data} - V_C$ [V]')
+    plt.plot(t, discharging1, 'k,',
+             abs(time[0]) + t, charging1, 'k,')
 
     plt.subplot(2, 1, 2)
     plt.plot(t, discharging, 'k,',
@@ -333,17 +333,17 @@ def relative():
 def RCLP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, 20*np.log10(H_lp(omega)[0]), 'b-', label='LP Transfer function')
-    plt.plot(angular_frequency_C, magnitude_C, 'r-', label='Data')
-    plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)[0]), 'kx', label='Gain at $\omega=\omega_c$')
+    plt.semilogx(omega, H_lp(omega)[1], 'tab:orange', label='LP Transfer function')
+    plt.plot(angular_frequency_C, magnitude_C, 'b-', label='Data')
+    plt.semilogx(omega_c, H_lp(omega_c)[1], 'kx', label='Gain at $\omega=\omega_c$')
     plt.legend()
     plt.grid(True)
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_lp(omega)[1]*180/np.pi, 'b-', label='LP Phase shift')
-    plt.plot(angular_frequency_C, phase_C, 'r-', label='Data')
-    plt.semilogx(omega_c, H_lp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega=\omega_c$')
+    plt.semilogx(omega, H_lp(omega)[2], 'tab:orange', label='LP Phase shift')
+    plt.plot(angular_frequency_C, phase_C, 'b-', label='Data')
+    plt.semilogx(omega_c, H_lp(omega_c)[2], 'kx', label='Phase at $\omega=\omega_c$')
     plt.yticks(np.arange(0, -105, step=-15))
     plt.legend()
     plt.grid(True)
@@ -353,6 +353,14 @@ def RCLP():
     plt.savefig('data_bodeplots_rc_lp.pdf')
     plt.show()
 
+    percent_difference_mag = (magnitude_C - H_lp(omega)[1])*100/H_lp(omega)[1]
+    percent_difference_phase = (phase_C - H_lp(omega)[2])*100/H_lp(omega)[2]
+    sum_percent_mag = sum(abs(percent_difference_mag))/len(magnitude_C)
+    sum_percent_phase = sum(abs(percent_difference_phase))/len(magnitude_C)
+    print("The percentage difference of", "\n",
+          "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
+          "Phase:     {:.5f}%".format(sum_percent_phase))
+
 # =============================================================================
 # Bodeplot of RC HP filter
 # =============================================================================
@@ -361,17 +369,17 @@ def RCLP():
 def RCHP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, 20*np.log10(H_hp(omega)[0]), 'b-', label='HP Transfer function')
-    plt.plot(angular_frequency_R, magnitude_R, 'r-', label='Data')
-    plt.semilogx(omega_c, 20*np.log10(H_hp(omega_c)[0]), 'kx', label='Gain at $\omega_c$')
+    plt.semilogx(omega, H_hp(omega)[1], 'tab:orange', label='HP Transfer function')
+    plt.plot(angular_frequency_R, magnitude_R, 'b-', label='Data')
+    plt.semilogx(omega_c, H_hp(omega_c)[1], 'kx', label='Gain at $\omega_c$')
     plt.legend()
     plt.grid(True)
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_hp(omega)[1]*180/np.pi, 'b-', label='HP Phase shift')
-    plt.plot(angular_frequency_R, phase_R, 'r-', label='Data')
-    plt.semilogx(omega_c, H_hp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega_c$')
+    plt.semilogx(omega, H_hp(omega)[2], 'tab:orange', label='HP Phase shift')
+    plt.plot(angular_frequency_R, phase_R, 'b-', label='Data')
+    plt.semilogx(omega_c, H_hp(omega_c)[2], 'kx', label='Phase at $\omega_c$')
     plt.yticks(np.arange(0, 105, step=15))
     plt.legend()
     plt.grid(True)
@@ -381,82 +389,49 @@ def RCHP():
     plt.savefig('data_bodeplots_rc_hp.pdf')
     plt.show()
 
+    percent_difference_mag = (magnitude_R - H_hp(omega)[1])*100/H_hp(omega)[1]
+    percent_difference_phase = (phase_R - H_hp(omega)[2])*100/H_hp(omega)[2]
+    sum_percent_mag = sum(abs(percent_difference_mag))/len(magnitude_R)
+    sum_percent_phase = sum(abs(percent_difference_phase))/len(magnitude_R)
+    print("The percentage difference of", "\n",
+          "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
+          "Phase:     {:.5f}%".format(sum_percent_phase))
+
 # =============================================================================
 # Simulation of output sine wave
 # =============================================================================
 
 
 def sine():
-    if len(sys.argv) == 3:
-        w = eval(sys.argv[2])
-    else:
-        w = 100*2*np.pi
-    t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
-    A = 1
-    phi = 0
-    k = 0
-    plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w, phi, A), 'b-', label='Input')
-    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='Output')
-    plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
-    plt.legend()
-    plt.xlabel('Time [s]')
-    plt.ylabel('Voltage [V]')
-    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
-
-    plt.savefig('sine.pdf')
-    plt.show()
-
-
-def sine_simulation():
-    w = f_sim*2*np.pi
-    t = np.linspace(0, 10/(w/(2*np.pi)), 5000)
-    A = A_sim
-    phi = phi_sim
-    k = k_sim
-    plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w, phi, A), 'b-', label='Input')
-    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='Output')
-    plt.plot(time_sim, sine_simple, 'k-', label='Data')
-    plt.axhline(A*(1/np.sqrt(2)), label='Cutoff')
-    plt.legend()
-    plt.xlabel('Time [s]')
-    plt.ylabel('Voltage [V]')
-    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.2f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
-
-    plt.savefig('sine_sim.pdf')
-    plt.show()
-
-
-def sine_hard():
     w = f_out*2*np.pi
-    t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
+    t = np.linspace(time_out[0], time_out[-1], 8192)
     A = A_out
     phi = phi_out
     k = k_out
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w, phi, A), 'b-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi*(180/np.pi)))
-    plt.plot(t, V_out(t, w, phi, A, k), 'r-', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[1])*(180/np.pi)))
+    plt.plot(t, V(t, w, phi, A), 'k-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi))
+    plt.plot(t, V_out(t, w, phi, A, k), 'tab:orange', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[2])))
     plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
-    plt.plot(time_out, sine_out, 'k-', label='Data')
+    plt.plot(time_out, sine_out, 'b--', label='Data')
     plt.legend()
     plt.xlabel('Time [s]')
     plt.ylabel('Voltage [V]')
-    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.0f}\N{DEGREE SIGN}$'.format(w, phi*(180/np.pi)))
+    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.0f}\N{DEGREE SIGN}$'.format(w, phi))
 
-    plt.savefig('sine_hard.pdf')
+    plt.savefig('sine.pdf')
     plt.show()
+
+    percent_difference_sine = (sine_out - V_out(t, w, phi, A, k))*100/V_out(t, w, phi, A, k)
+    sum_percent_sine = sum(abs(percent_difference_sine))/len(sine_out)
+    print("The percentage difference is:", "\n",
+          "{:.5f}%".format(sum_percent_sine))
 
 
 if len(sys.argv) >= 2:
-    if sys.argv[1].lower() == 'sine_hard':
-        sine_hard()
-    elif sys.argv[1].lower() == 'sine_sim':
-        sine_simulation()
+    if sys.argv[1].lower() == 'sine':
+        sine()
     elif sys.argv[1].upper() == 'RCHP':
         RCHP()
-    elif sys.argv[1].lower() == 'sine':
-        sine()
     elif sys.argv[1].lower() == 'relative':
         relative()
     elif sys.argv[1].lower() == 'deviation':
