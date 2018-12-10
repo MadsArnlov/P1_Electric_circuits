@@ -79,7 +79,7 @@ an arary for time is made, t, which has the length of 5000, uniform spaced
 values between 0 and 'time_charge'.
 """
 t = np.linspace(0, abs(time[0]), 5000)
-omega = np.linspace(angular_frequency_C[0], angular_frequency_C[-1], 5000)
+omega = np.logspace(np.log10(angular_frequency_C[0]), np.log10(angular_frequency_C[-1]), num=200)
 
 
 def V_C(t):
@@ -212,7 +212,7 @@ def H_hp(omega):
     argument: float
         The phase of the transfer function in radians
     """
-    modulus = np.sqrt(omega**2*tau**2)/np.sqrt(1 + omega**2*tau**2)
+    modulus = np.sqrt(omega**2 * tau**2)/np.sqrt(1 + omega**2 * tau**2)
     argument = np.arctan(1/(omega*tau))
     return modulus, argument
 
@@ -303,11 +303,11 @@ def relative():
             charging[value] = None
         elif charging[value] >= 100:
             charging[value] = None
-#    average_discharging = sum(abs(discharging)/len(discharging))
-#    average_charging = sum(abs(charging)/len(charging))
-#    print("The relative percentage difference of", "\n",
-#          "Discharging: {:.5f}%".format(average_discharging), "\n",
-#          "Charging: {:.5f}%".format(average_charging))
+    average_discharging = sum(abs(discharging)/len(discharging))
+    average_charging = sum(abs(charging)/len(charging))
+    print("The percentage difference of", "\n",
+          "Discharging: {:.5f}%".format(average_discharging), "\n",
+          "Charging:    {:.5f}%".format(average_charging))
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
     plt.plot(t, discharging1, 'k,',
@@ -328,9 +328,11 @@ def relative():
 
 
 def RCLP():
+    G_mag = 20*np.log10(H_lp(omega)[0])
+    G_phase = H_lp(omega)[1]*180/np.pi
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, 20*np.log10(H_lp(omega)[0]), 'tab:orange', label='LP Transfer function')
+    plt.semilogx(omega, G_mag, 'tab:orange', label='LP Transfer function')
     plt.plot(angular_frequency_C, magnitude_C, 'b-', label='Data')
     plt.semilogx(omega_c, 20*np.log10(H_lp(omega_c)[0]), 'kx', label='Gain at $\omega=\omega_c$')
     plt.legend()
@@ -338,7 +340,7 @@ def RCLP():
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_lp(omega)[1]*180/np.pi, 'tab:orange', label='LP Phase shift')
+    plt.semilogx(omega, G_phase, 'tab:orange', label='LP Phase shift')
     plt.plot(angular_frequency_C, phase_C, 'b-', label='Data')
     plt.semilogx(omega_c, H_lp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega=\omega_c$')
     plt.yticks(np.arange(0, -105, step=-15))
@@ -350,15 +352,25 @@ def RCLP():
     plt.savefig('data_bodeplots_rc_lp.pdf')
     plt.show()
 
+    percent_difference_mag = (magnitude_C - G_mag)*100/G_mag
+    percent_difference_phase = (phase_C - G_phase)*100/G_phase
+    sum_percent_mag = sum(abs(percent_difference_mag))/len(magnitude_C)
+    sum_percent_phase = sum(abs(percent_difference_phase))/len(magnitude_C)
+    print("The percentage difference of", "\n",
+          "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
+          "Phase:     {:.5f}%".format(sum_percent_phase))
+
 # =============================================================================
 # Bodeplot of RC HP filter
 # =============================================================================
 
 
 def RCHP():
+    G_mag = 20*np.log10(H_hp(omega)[0])
+    G_phase = H_hp(omega)[1]*180/np.pi
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, 20*np.log10(H_hp(omega)[0]), 'tab:orange', label='HP Transfer function')
+    plt.semilogx(omega, G_mag, 'tab:orange', label='HP Transfer function')
     plt.plot(angular_frequency_R, magnitude_R, 'b-', label='Data')
     plt.semilogx(omega_c, 20*np.log10(H_hp(omega_c)[0]), 'kx', label='Gain at $\omega_c$')
     plt.legend()
@@ -366,7 +378,7 @@ def RCHP():
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_hp(omega)[1]*180/np.pi, 'tab:orange', label='HP Phase shift')
+    plt.semilogx(omega, G_phase, 'tab:orange', label='HP Phase shift')
     plt.plot(angular_frequency_R, phase_R, 'b-', label='Data')
     plt.semilogx(omega_c, H_hp(omega_c)[1]*180/np.pi, 'kx', label='Phase at $\omega_c$')
     plt.yticks(np.arange(0, 105, step=15))
@@ -377,6 +389,14 @@ def RCHP():
 
     plt.savefig('data_bodeplots_rc_hp.pdf')
     plt.show()
+
+    percent_difference_mag = (magnitude_R - G_mag)*100/G_mag
+    percent_difference_phase = (phase_R - G_phase)*100/G_phase
+    sum_percent_mag = sum(abs(percent_difference_mag))/len(magnitude_R)
+    sum_percent_phase = sum(abs(percent_difference_phase))/len(magnitude_R)
+    print("The percentage difference of", "\n",
+          "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
+          "Phase:     {:.5f}%".format(sum_percent_phase))
 
 # =============================================================================
 # Simulation of output sine wave
@@ -427,7 +447,7 @@ def sine_simulation():
 
 def sine_hard():
     w = f_out*2*np.pi
-    t = np.linspace(0, 5/(w/(2*np.pi)), 5000)
+    t = np.linspace(time_out[0], time_out[-1], 8192)
     A = A_out
     phi = phi_out
     k = k_out
@@ -443,6 +463,11 @@ def sine_hard():
 
     plt.savefig('sine_hard.pdf')
     plt.show()
+
+    percent_difference_sine = (sine_out - V_out(t, w, phi, A, k))*100/V_out(t, w, phi, A, k)
+    sum_percent_sine = sum(abs(percent_difference_sine))/len(sine_out)
+    print("The percentage difference is:", "\n",
+          "{:.5f}%".format(sum_percent_sine))
 
 
 if len(sys.argv) >= 2:
