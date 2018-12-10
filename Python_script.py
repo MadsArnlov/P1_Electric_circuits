@@ -139,30 +139,34 @@ def V_R(t):
 
 def V(t, w, phi, A):
     """
-    Returns a sine wave as the input voltage.
-
-    A = Amplitude
-    w = angular frequency
-    phi = phase
+    Returns a sine wave of the input voltage.
 
     Parameters
     ----------
     t: float
         The time for the sine wave
+    w: float
+        The angular frequency
+    phi: float
+        The phase
     """
     return A*np.sin(w*t + phi)
 
 
 def V_out(t, w, phi, A, k):
     """
-    Returns a sine wave as the output voltage.
-
-    A = amplitude of input voltage
+    Returns a sine wave of the output voltage.
 
     Parameters
     ----------
     t: float
         The time for the sine wave
+    w: float
+        The angular frequency
+    phi: float
+        The phase
+    k: float
+        The oscilliation constant
     """
     return A*H_lp(w)[0]*np.sin(w*t + phi + H_lp(w)[1]) + k*A/tau*np.exp(-t/tau)
 
