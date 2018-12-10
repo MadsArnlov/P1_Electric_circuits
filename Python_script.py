@@ -369,8 +369,8 @@ def RCLP():
 def RCHP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, H_hp(omega)[1], 'tab:orange', label='HP Transfer function')
-    plt.plot(angular_frequency_R, magnitude_R, 'b-', label='Data')
+    plt.semilogx(omega[150:200], H_hp(omega)[1][150:200], 'r.', label='HP Transfer function')
+    plt.plot(angular_frequency_R[150:200], magnitude_R[150:200], 'b.', label='Data')
     plt.semilogx(omega_c, H_hp(omega_c)[1], 'kx', label='Gain at $\omega_c$')
     plt.legend()
     plt.grid(True)
