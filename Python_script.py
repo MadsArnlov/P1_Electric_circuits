@@ -34,16 +34,6 @@ angular_frequency_R = frequency_R*2*np.pi
 magnitude_R = data_magnitude_R[1:, 2]
 phase_R = data_magnitude_R[1:, 3]
 
-"Output sine wave across capacitor for simpel input wave"
-data_sim = np.genfromtxt("outputWave_1v4755ohm96_54nF.csv", delimiter=",")
-
-f_sim = 1000
-A_sim = 1
-phi_sim = 0
-k_sim = 0
-time_sim = data_sim[1:, 0]
-sine_simple = data_sim[1:, 1]
-
 "Output sine wave across capacitor with phase shift and amplitude"
 data_out = np.genfromtxt("outputWave_3_5v30phase4755ohm96_54nF500f.csv",
                          delimiter=",")
