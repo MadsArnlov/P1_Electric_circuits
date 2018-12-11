@@ -93,26 +93,9 @@ def V_C(t):
     t: float
         The time after zero state
     """
-    return 0 + (V0 - 0)*np.exp(-t/tau) - V0/2
-
-
-def V_C2(t):
-    """
-    Returns the voltage of the capacitor as it charges.
-
-    The formula is derived in chapter "RC time analysis", section
-    "Complete response":
-        Vc(t) = V + (V0 - V)e^(-t/tau)
-    The data is offset by V0/2, for which the model is modified.
-
-    The value V, is the same as V0 from V_C(t).
-
-    Parameters
-    ----------
-    t: float
-        The time starting from 0
-    """
-    return V0 + (0 - V0)*np.exp(-t/tau) - V0/2
+    discharging = 0 + (V0 - 0)*np.exp(-t/tau) - V0/2
+    charging = V0 + (0 - V0)*np.exp(-t/tau) - V0/2
+    return discharging, charging
 
 
 def V_R(t):
@@ -136,7 +119,7 @@ def V_R(t):
 
 def V(t, w, phi, A):
     """
-    Returns a sine wave of the input voltage.
+    Returns the voltage of the input wave to time t.
 
     Parameters
     ----------
@@ -152,7 +135,7 @@ def V(t, w, phi, A):
 
 def V_out(t, w, phi, A, k):
     """
-    Returns a sine wave of the output voltage.
+    Returns the voltage of the output wave to time t.
 
     Parameters
     ----------
@@ -170,25 +153,31 @@ def V_out(t, w, phi, A, k):
 
 def H_lp(omega):
     """
-    Returns the transfer function of a first order Low Pass filter.
+    Returns modulus, magnitude and the argument of the transfer function
+    for a first order low pass filter.
 
-    The formula is derived in chapter "Passive Analogue Filters", section
-    "Low pass filter":
-        H(s) = 1/sqrt(s^2tau^2 + 1)
+    The formula is derived in chapter "RC Frequency Analysis", section
+    "Response and Transfer Function of the Capacitor":
+         H(s)  = 1/sqrt(omega*tau + 1)
+        |H(s)| = 1/sqrt(omega^2*tau^2 + 1)
+         G(s)  = 20*log10(|H(s)|)
+     arg(H(s)) = arctan(-omega*tau)
 
     Parameters
     ----------
-    s: float
-        The complex frequency
+    omega: float
+        The angular frequency
 
     Returns
     -------
     modulus: float
-        The length of the transfer function
+        The absolute value of the transfer function
+    magnitude: float
+        Logarithmic scale of the modulus
     argument: float
-        The phase of the transfer function in radians
+        The phase of the transfer function in degrees
     """
-    modulus = 1/np.sqrt(1 + omega**2 * tau**2)
+    modulus = 1/np.sqrt(omega**2*tau**2 + 1)
     magnitude = 20*np.log10(modulus)
     argument = np.arctan(-omega*tau)*180/np.pi
     return modulus, magnitude, argument
@@ -196,25 +185,31 @@ def H_lp(omega):
 
 def H_hp(omega):
     """
-    Returns the transfer function of a first order High Pass Filter.
+    Returns modulus, magnitude and the argument of the transfer function
+    for a first order high pass filter.
 
-    The formula is derived in chapter "Passive Analogue Filters", section
-    "High pass filter":
-        H(s) = 1/sqrt(1 + (1/s*tau)^2)
+    The formula is derived in chapter "RC Frequency Analysis", section
+    "Response and transfer function of the Resistor":
+         H(s)  = omega*tau/sqrt(1 + omega*tau)
+        |H(s)| = sqrt(omega^2*tau^2)/sqrt(omega^2*tau^2 + 1)
+         G(s)  = 20*log10(|H(s)|)
+     arg(H(s)) = arctan(1/omega*tau)
 
     Parameters
     ----------
-    s: float
-        The complex frequency
+    omega: float
+        The angular frequency
 
     Returns
     -------
     modulus: float
-        The length of the transfer function
+        The absolute value of the transfer function
+    magnitude: float
+        Logarithmic scale of the modulus
     argument: float
-        The phase of the transfer function in radians
+        The phase of the transfer function in degrees
     """
-    modulus = np.sqrt(omega**2 * tau**2)/np.sqrt(1 + omega**2 * tau**2)
+    modulus = np.sqrt(omega**2*tau**2)/np.sqrt(omega**2*tau**2 + 1)
     magnitude = 20*np.log10(modulus)
     argument = np.arctan(1/(omega*tau))*180/np.pi
     return modulus, magnitude, argument
@@ -223,6 +218,7 @@ def H_hp(omega):
 # =============================================================================
 # Plot of data
 # =============================================================================
+"The time is shifted, so that it starts from 0"
 
 
 def data():
@@ -235,15 +231,17 @@ def data():
     plt.savefig('data.pdf')
     plt.show()
 
+
 # =============================================================================
 # Plot of mathematical model
 # =============================================================================
+"To simulate discharging and charging, a piecewise function is used - V_C(t)."
 
 
 def model():
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V_C(t), 'tab:orange')
-    plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange',
+    plt.plot(t, V_C(t)[0], 'tab:orange')
+    plt.plot(abs(time[0]) + t, V_C(t)[1], 'tab:orange',
              label='Mathematical model')
     plt.plot(time - time[0], sqwave_data, 'k--', label='Square wave')
     plt.xlabel('$t$ [s]')
@@ -252,17 +250,19 @@ def model():
     plt.savefig('mathematical_model.pdf')
     plt.show()
 
+
 # =============================================================================
 # Plot of data and mathematical model
 # =============================================================================
+"The data and simulated model are plotted together with the square wave."
 
 
 def data_vs_model():
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V_C(t), 'tab:orange', label='Modelled voltage')
-    plt.plot(abs(time[0]) + t, V_C2(t), 'tab:orange')
+    plt.plot(t, V_C(t)[0], 'tab:orange', label='Modelled voltage')
+    plt.plot(abs(time[0]) + t, V_C(t)[1], 'tab:orange')
     plt.plot(time + abs(time[0]), cap, 'b,', label='Data points')
-    plt.plot(tau, V_C(tau), 'kx', label='$V_C(tau)$')
+    plt.plot(tau, V_C(tau)[0], 'kx', label='$V_C(\u03C4)$')
     plt.plot(time + abs(time[0]), sqwave_data, 'k--', label='Square wave')
     plt.xlabel('$t$ [s]')
     plt.ylabel('$V_C$ [V]')
@@ -271,31 +271,46 @@ def data_vs_model():
     plt.savefig('data_vs_model.pdf')
     plt.show()
 
+
 # =============================================================================
 # Plot of deviation between data and mathematical model
 # =============================================================================
+"The deviation between data and model are calculated and plottet."
 
 
 def deviation():
     plt.figure(figsize=(12, 8))
-    plt.plot(t, cap[:5000] - V_C(t), 'k,',
-             abs(time[0]) + t, cap[5000:] - V_C2(t), 'k,')
+    plt.plot(t, cap[:5000] - V_C(t)[0], 'k,',
+             abs(time[0]) + t, cap[5000:] - V_C(t)[1], 'k,')
     plt.xlabel('t [s]')
     plt.ylabel('$V_{data} - V_C$ [V]')
 
     plt.savefig('deviation.pdf')
     plt.show()
 
+
 # =============================================================================
 # Relative percentage difference
 # =============================================================================
+"""
+First the percentage difference for discharging and charging are calculated.
+Afterwards all indices where the percentage difference is greater than 100%
+are set to "None".
+
+The average percentage difference is calculated and printed where all
+indices are included.
+
+The percentage difference with and without percentages greater than
+100% are plotted.
+"""
 
 
 def relative():
-    discharging = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
-    charging = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
-    discharging1 = ((cap[:5000] - V_C(t))*100)/abs(V_C(t))
-    charging1 = ((cap[5000:] - V_C2(t))*100)/abs(V_C2(t))
+    discharging = ((cap[:5000] - V_C(t)[0])*100)/abs(V_C(t)[0])
+    charging = ((cap[5000:] - V_C(t)[1])*100)/abs(V_C(t)[1])
+    discharging1 = ((cap[:5000] - V_C(t)[0])*100)/abs(V_C(t)[0])
+    charging1 = ((cap[5000:] - V_C(t)[1])*100)/abs(V_C(t)[1])
+
     for value in range(len(discharging)):
         if discharging[value] >= 100:
             discharging[value] = None
@@ -306,11 +321,14 @@ def relative():
             charging[value] = None
         elif charging[value] >= 100:
             charging[value] = None
-    average_discharging = sum(abs(discharging)/len(discharging))
-    average_charging = sum(abs(charging)/len(charging))
+
+    average_discharging = sum(abs(discharging1)/len(discharging1))
+    average_charging = sum(abs(charging1)/len(charging1))
+
     print("The percentage difference of", "\n",
           "Discharging: {:.5f}%".format(average_discharging), "\n",
           "Charging:    {:.5f}%".format(average_charging))
+
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
     plt.plot(t, discharging1, 'k,',
@@ -325,17 +343,24 @@ def relative():
     plt.savefig("relative_percentage_difference.pdf")
     plt.show()
 
+
 # =============================================================================
 # Bodeplot of RC LP filter
 # =============================================================================
+"""
+Bodeplot of low pass filter consisting of the magnitude and phase.
 
+After the plot the average percentage difference is also calculated.
+"""
 
 def RCLP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, H_lp(omega)[1], 'tab:orange', label='LP Transfer function')
+    plt.semilogx(omega, H_lp(omega)[1], 'tab:orange',
+                 label='LP Transfer function')
     plt.plot(angular_frequency_C, magnitude_C, 'b-', label='Data')
-    plt.semilogx(omega_c, H_lp(omega_c)[1], 'kx', label='Gain at $\omega=\omega_c$')
+    plt.semilogx(omega_c, H_lp(omega_c)[1], 'kx',
+                 label='$G(j\omega_c)$')
     plt.legend()
     plt.grid(True)
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
@@ -343,7 +368,8 @@ def RCLP():
     plt.subplot(2, 1, 2)
     plt.semilogx(omega, H_lp(omega)[2], 'tab:orange', label='LP Phase shift')
     plt.plot(angular_frequency_C, phase_C, 'b-', label='Data')
-    plt.semilogx(omega_c, H_lp(omega_c)[2], 'kx', label='Phase at $\omega=\omega_c$')
+    plt.semilogx(omega_c, H_lp(omega_c)[2], 'kx',
+                 label='Phase at $\omega=\omega_c$')
     plt.yticks(np.arange(0, -105, step=-15))
     plt.legend()
     plt.grid(True)
@@ -361,17 +387,24 @@ def RCLP():
           "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
           "Phase:     {:.5f}%".format(sum_percent_phase))
 
+
 # =============================================================================
 # Bodeplot of RC HP filter
 # =============================================================================
+"""
+Bodeplot of high pass filter consisting of the magnitude and phase.
+
+After the plot the average percentage difference is also calculated.
+"""
 
 
 def RCHP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, H_hp(omega)[1], 'tab:orange', label='HP Transfer function')
+    plt.semilogx(omega, H_hp(omega)[1], 'tab:orange',
+                 label='HP Transfer function')
     plt.plot(angular_frequency_R, magnitude_R, 'b-', label='Data')
-    plt.semilogx(omega_c, H_hp(omega_c)[1], 'kx', label='Gain at $\omega_c$')
+    plt.semilogx(omega_c, H_hp(omega_c)[1], 'kx', label='$G(j\omega_c)$')
     plt.legend()
     plt.grid(True)
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
@@ -393,13 +426,21 @@ def RCHP():
     percent_difference_phase = (phase_R - H_hp(omega)[2])*100/H_hp(omega)[2]
     sum_percent_mag = sum(abs(percent_difference_mag))/len(magnitude_R)
     sum_percent_phase = sum(abs(percent_difference_phase))/len(magnitude_R)
+
     print("The percentage difference of", "\n",
           "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
           "Phase:     {:.5f}%".format(sum_percent_phase))
 
+
 # =============================================================================
 # Simulation of output sine wave
 # =============================================================================
+"""
+Plots the returning voltage across the capacitor for an input sine wave
+with an amplitude of 3.5 and phase of 30 degrees.
+
+The percentage difference is calculated.
+"""
 
 
 def sine():
@@ -409,23 +450,32 @@ def sine():
     phi = phi_out
     k = k_out
     plt.figure(figsize=(12, 8))
-    plt.plot(t, V(t, w, phi, A), 'k-', label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'.format(A, phi))
-    plt.plot(t, V_out(t, w, phi, A, k), 'tab:orange', label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'.format(A*H_lp(w)[0], (phi + H_lp(w)[2])))
+    plt.plot(t, V(t, w, phi, A), 'k-',
+             label='$V(t) = {}\cdot\sin(\omega t + {:.0f}\N{DEGREE SIGN})$'
+             .format(A, phi))
+    plt.plot(t, V_out(t, w, phi, A, k), 'tab:orange',
+             label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'
+             .format(A*H_lp(w)[0], (phi + H_lp(w)[2])))
     plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
     plt.plot(time_out, sine_out, 'b--', label='Data')
     plt.legend()
     plt.xlabel('Time [s]')
     plt.ylabel('Voltage [V]')
-    plt.title('Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.0f}\N{DEGREE SIGN}$'.format(w, phi))
+    plt.title("Angular frequency $\omega = {:.2f}$ and phase $\phi = {:.0f}\N{DEGREE SIGN}$"
+              .format(w, phi))
 
     plt.savefig('sine.pdf')
     plt.show()
 
-    percent_difference_sine = (sine_out - V_out(t, w, phi, A, k))*100/V_out(t, w, phi, A, k)
+    percent_difference_sine = (sine_out - V_out(t, w, phi, A, k))*100/V_out(
+            t, w, phi, A, k)
     sum_percent_sine = sum(abs(percent_difference_sine))/len(sine_out)
+
     print("The percentage difference is:", "\n",
           "{:.5f}%".format(sum_percent_sine))
 
+
+"The program can be run from the command line."
 
 if len(sys.argv) >= 2:
     if sys.argv[1].lower() == 'sine':
