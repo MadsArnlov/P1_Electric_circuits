@@ -379,12 +379,16 @@ def RCLP():
     plt.savefig('data_bodeplots_rc_lp.pdf')
     plt.show()
 
-    percent_difference_mag = (magnitude_C - H_lp(omega)[1])*100/H_lp(omega)[1]
+    amplitude_percent_mag = ((10**(magnitude_C/20) -
+                              H_lp(angular_frequency_C)[0]))*100/(
+                              H_lp(angular_frequency_C)[0])
+    sum_amp = sum(abs(amplitude_percent_mag))/len(magnitude_C)
+
     percent_difference_phase = (phase_C - H_lp(omega)[2])*100/H_lp(omega)[2]
-    sum_percent_mag = sum(abs(percent_difference_mag))/len(magnitude_C)
     sum_percent_phase = sum(abs(percent_difference_phase))/len(magnitude_C)
+
     print("The percentage difference of", "\n",
-          "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
+          "Amplitude: {:.5f}%".format(sum_amp), "\n",
           "Phase:     {:.5f}%".format(sum_percent_phase))
 
 
@@ -422,13 +426,16 @@ def RCHP():
     plt.savefig('data_bodeplots_rc_hp.pdf')
     plt.show()
 
-    percent_difference_mag = (magnitude_R - H_hp(omega)[1])*100/H_hp(omega)[1]
+    amplitude_percent_mag = ((10**(magnitude_R/20) -
+                              H_hp(angular_frequency_R)[0]))*100/(
+                              H_hp(angular_frequency_R)[0])
+    sum_amp = sum(abs(amplitude_percent_mag))/len(magnitude_R)
+
     percent_difference_phase = (phase_R - H_hp(omega)[2])*100/H_hp(omega)[2]
-    sum_percent_mag = sum(abs(percent_difference_mag))/len(magnitude_R)
     sum_percent_phase = sum(abs(percent_difference_phase))/len(magnitude_R)
 
     print("The percentage difference of", "\n",
-          "Magnitude: {:.5f}%".format(sum_percent_mag), "\n",
+          "Amplitude: {:.5f}%".format(sum_amp), "\n",
           "Phase:     {:.5f}%".format(sum_percent_phase))
 
 
