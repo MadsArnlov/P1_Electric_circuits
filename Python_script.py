@@ -476,10 +476,11 @@ def sine():
 
     percent_difference_sine = (sine_out - V_out(t, w, phi, A, k))*100/V_out(
             t, w, phi, A, k)
+    plt.plot(time_out, percent_difference_sine, 'b.')
     sum_percent_sine = sum(abs(percent_difference_sine))/len(sine_out)
-
+    percent = (sum((sine_out)) - sum((V_out(t, w, phi, A, k))))*100/sum(abs(V_out(t, w, phi, A, k)))
     print("The percentage difference is:", "\n",
-          "{:.5f}%".format(sum_percent_sine))
+          "{:.5f}%".format(percent))
 
 
 "The program can be run from the command line."
