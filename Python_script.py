@@ -416,7 +416,7 @@ def RCHP():
     plt.subplot(2, 1, 2)
     plt.semilogx(omega, H_hp(omega)[2], 'tab:orange', label='HP phase shift')
     plt.plot(angular_frequency_R, phase_R, 'b-', label='Data')
-    plt.semilogx(omega_c, H_hp(omega_c)[2], 'kx', label='Phase at $\omega_c$')
+    plt.semilogx(omega_c, H_hp(omega_c)[2], 'kx', label='Phase at $\omega = \omega_c$')
     plt.yticks(np.arange(0, 105, step=15))
     plt.legend()
     plt.grid(True)
