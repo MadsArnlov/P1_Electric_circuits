@@ -25,7 +25,7 @@ The following commands can be used to generate plots:
 # =============================================================================
 "The data is exported from 'Waveform'."
 "Voltage across capacitor in time domain"
-data_time = np.genfromtxt("forsøgsdata.csv", delimiter=",")
+data_time = np.genfromtxt("charging_discharging.csv", delimiter=",")
 
 time = data_time[1:, 0]
 sqwave_data = data_time[1:, 1]
