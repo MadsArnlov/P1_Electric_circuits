@@ -366,7 +366,7 @@ def RCLP():
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_lp(omega)[2], 'tab:orange', label='LP Phase shift')
+    plt.semilogx(omega, H_lp(omega)[2], 'tab:orange', label='LP phase shift')
     plt.plot(angular_frequency_C, phase_C, 'b-', label='Data')
     plt.semilogx(omega_c, H_lp(omega_c)[2], 'kx',
                  label='Phase at $\omega=\omega_c$')
@@ -414,7 +414,7 @@ def RCHP():
     plt.ylabel('Magnitude $G(j\omega)$ [dB]')
 
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, H_hp(omega)[2], 'tab:orange', label='HP Phase shift')
+    plt.semilogx(omega, H_hp(omega)[2], 'tab:orange', label='HP phase shift')
     plt.plot(angular_frequency_R, phase_R, 'b-', label='Data')
     plt.semilogx(omega_c, H_hp(omega_c)[2], 'kx', label='Phase at $\omega_c$')
     plt.yticks(np.arange(0, 105, step=15))
