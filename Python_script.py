@@ -357,7 +357,7 @@ def RCLP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
     plt.semilogx(omega, H_lp(omega)[1], 'tab:orange',
-                 label='LP Transfer function')
+                 label='LP transfer function')
     plt.plot(angular_frequency_C, magnitude_C, 'b-', label='Data')
     plt.semilogx(omega_c, H_lp(omega_c)[1], 'kx',
                  label='$G(j\omega_c)$')
@@ -373,7 +373,7 @@ def RCLP():
     plt.yticks(np.arange(0, -105, step=-15))
     plt.legend()
     plt.grid(True)
-    plt.xlabel('Angular frequency $\omega$ [Hz]')
+    plt.xlabel('Angular frequency $\omega$ [rad/s]')
     plt.ylabel('Phase $\u03B8$ [degrees]')
 
     plt.savefig('data_bodeplots_rc_lp.pdf')
@@ -406,7 +406,7 @@ def RCHP():
     plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
     plt.semilogx(omega, H_hp(omega)[1], 'tab:orange',
-                 label='HP Transfer function')
+                 label='HP transfer function')
     plt.plot(angular_frequency_R, magnitude_R, 'b-', label='Data')
     plt.semilogx(omega_c, H_hp(omega_c)[1], 'kx', label='$G(j\omega_c)$')
     plt.legend()
@@ -420,7 +420,7 @@ def RCHP():
     plt.yticks(np.arange(0, 105, step=15))
     plt.legend()
     plt.grid(True)
-    plt.xlabel('Angular frequency $\omega$ [Hz]')
+    plt.xlabel('Angular frequency $\omega$ [rad/s]')
     plt.ylabel('Phase $\u03B8$ [degree]')
 
     plt.savefig('data_bodeplots_rc_hp.pdf')
