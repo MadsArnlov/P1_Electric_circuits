@@ -463,7 +463,7 @@ def sine():
     plt.plot(t, V_out(t, w, phi, A, k), 'tab:orange',
              label='$V_C(t) = {:.1f}\cdot\sin(\omega t {:.2f}\N{DEGREE SIGN})$'
              .format(A*H_lp(w)[0], (phi + H_lp(w)[2])))
-    plt.axhline(A*(1/np.sqrt(2)), label='A of $V_C(t)$ at $\omega_c$')
+    plt.axhline(A*(1/np.sqrt(2)), label='Amplitude of $V_C(t)$ at $\omega_c$')
     plt.plot(time_out, sine_out, 'b--', label='Data')
     plt.legend()
     plt.xlabel('Time [s]')
