@@ -7,6 +7,20 @@ import numpy as np
 import sys
 
 # =============================================================================
+# How to use the script
+# =============================================================================
+"""
+The following commands can be used to generate plots:
+    data() - plots the data from the experiment of the time domain.
+    model() - plots the modelled voltage of the capacitor in the time domain.
+    data_vs_model() - plots both the data and model of the capacitor voltage.
+    deviation() - plots the deviation between the data and model.
+    relative() - plots the relative percentage difference in the time domain.
+    RCLP() - plots the Bode plot of the low pass filter.
+    RCHP() - plots the Bode plot of the high pass filter.
+    sine() - plots the output sine wave across the capacitor.
+"""
+# =============================================================================
 # Data
 # =============================================================================
 "The data is exported from 'Waveform'."
@@ -476,11 +490,9 @@ def sine():
 
     percent_difference_sine = (sine_out - V_out(t, w, phi, A, k))*100/V_out(
             t, w, phi, A, k)
-    plt.plot(time_out, percent_difference_sine, 'b.')
     sum_percent_sine = sum(abs(percent_difference_sine))/len(sine_out)
-    percent = (sum((sine_out)) - sum((V_out(t, w, phi, A, k))))*100/sum(abs(V_out(t, w, phi, A, k)))
     print("The percentage difference is:", "\n",
-          "{:.5f}%".format(percent))
+          "{:.5f}%".format(sum_percent_sine))
 
 
 "The program can be run from the command line."
